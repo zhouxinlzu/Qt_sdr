@@ -13,8 +13,15 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    dockspec.cpp \
+    specwave.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    dockspec.h \
+    specwave.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    images.qrc

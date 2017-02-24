@@ -6,9 +6,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->centralWidget->hide();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_action_SPEC_triggered()
+{
+    ui->SpecWidget->show();
+
 }

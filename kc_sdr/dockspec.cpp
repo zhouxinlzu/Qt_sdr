@@ -1,6 +1,6 @@
 #include "dockspec.h"
 
-DockSpec::DockSpec()
+DockSpec::DockSpec(QWidget *parent):QDockWidget(parent)
 {
-
+    waveform = new SpecWave(this);
 }

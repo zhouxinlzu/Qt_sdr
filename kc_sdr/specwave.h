@@ -12,6 +12,8 @@ public:
 signals:
 
 public slots:
+protected:
+    void paintEvent(QPaintEvent *event);
 };
 
 #endif // SPECWAVE_H
