@@ -15,11 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     dockspec.cpp \
-    specwave.cpp
+    specwave.cpp \
+    libfft.cpp \
+    specbackground.cpp
 
 HEADERS  += mainwindow.h \
     dockspec.h \
-    specwave.h
+    specwave.h \
+    libfft.h \
+    specbackground.h
 
 FORMS    += mainwindow.ui
 

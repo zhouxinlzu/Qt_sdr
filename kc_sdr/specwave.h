@@ -2,6 +2,8 @@
 #define SPECWAVE_H
 
 #include <QWidget>
+#include <QGraphicsScene>
+#include "specbackground.h"
 
 class SpecWave : public QWidget
 {
@@ -14,6 +16,9 @@ signals:
 public slots:
 protected:
     void paintEvent(QPaintEvent *event);
+private:
+    SpecBackground *p_background;
+    QGraphicsScene *p_scene;
 };
 
 #endif // SPECWAVE_H

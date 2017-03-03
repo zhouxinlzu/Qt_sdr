@@ -1,0 +1,19 @@
+#ifndef SPECBACKGROUND_H
+#define SPECBACKGROUND_H
+
+#include <QGraphicsItem>
+#include <QPen>
+
+class SpecBackground : public QGraphicsItem
+{
+public:
+    SpecBackground();
+    QRectF boundingRect() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+private:
+    qreal   f64_penWidth;
+    QRectF  *p_rect;
+    QPen    pen;
+};
+
+#endif // SPECBACKGROUND_H
