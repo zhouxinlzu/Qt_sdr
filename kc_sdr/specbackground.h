@@ -7,7 +7,7 @@
 class SpecBackground : public QGraphicsItem
 {
 public:
-    SpecBackground();
+    SpecBackground(quint16 u16_width, quint16 u16_height);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 private:

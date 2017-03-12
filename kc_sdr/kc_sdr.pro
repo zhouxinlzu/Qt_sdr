@@ -17,13 +17,17 @@ SOURCES += main.cpp\
     dockspec.cpp \
     specwave.cpp \
     libfft.cpp \
-    specbackground.cpp
+    specbackground.cpp \
+    speccurve.cpp \
+    engine.cpp
 
 HEADERS  += mainwindow.h \
     dockspec.h \
     specwave.h \
     libfft.h \
-    specbackground.h
+    specbackground.h \
+    speccurve.h \
+    engine.h
 
 FORMS    += mainwindow.ui
 

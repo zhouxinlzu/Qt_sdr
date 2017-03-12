@@ -1,0 +1,55 @@
+#include "speccurve.h"
+#include <QPainter>
+#include <QDebug>
+SpecCurve::SpecCurve(quint16 u16_width, quint16 u16_height)
+{
+    f64_penWidth = 1;
+    p_rect = new QRectF(0 - f64_penWidth / 2,
+                        0 - f64_penWidth / 2,
+                        u16_width - 1 + f64_penWidth,
+                        u16_height - 1 + f64_penWidth);
+    pen = QPen(Qt::yellow, 0, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
+}
+QRectF SpecCurve::boundingRect() const
+{
+    QRectF  rect = *p_rect;
+
+    return rect;
+}
+
+void SpecCurve::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    qDebug() << "display curve";
+//    quint16 u16_height = p_rect->height();
+//    quint16 u16_width = p_rect->width();
+//    qreal   f64_hlDiv = u16_height / (HL_NUMBER + 1);
+//    qreal   f64_vlDiv = u16_width / (VL_NUMBER + 1);
+
+//#if DEBUG_BACKGROUND
+//    qDebug() << "get background height" << u16_height << "width" << u16_width <<endl;
+//#endif
+//    QPen outline(Qt::gray, 0, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
+//    painter->setPen(outline);
+//    QRectF rectangle = *p_rect;
+//    painter->drawRect(rectangle);
+//    painter->setPen(pen);
+
+//    for(quint8 i = 0; i < HL_NUMBER; i++)
+//    {
+//        painter->drawLine(0, (i + 1) * f64_hlDiv, u16_width, (i + 1) * f64_hlDiv);
+//    }
+//    for(quint8 i = 0; i < VL_NUMBER; i++)
+//    {
+//        painter->drawLine((i + 1) * f64_vlDiv, 0, (i + 1) * f64_vlDiv, u16_height);
+//    }
+    static const QPointF points[3] = {
+        QPointF(10.0, 80.0),
+        QPointF(20.0, 10.0),
+        QPointF(80.0, 30.0),
+    };
+painter->setPen(pen);
+    painter->drawPolyline(points, 3);
+}

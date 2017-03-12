@@ -7,6 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->centralWidget->hide();
+    engineThread.start();
 }
 
 MainWindow::~MainWindow()
