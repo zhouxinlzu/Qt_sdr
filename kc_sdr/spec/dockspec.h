@@ -9,8 +9,9 @@ class DockSpec : public QDockWidget
     Q_OBJECT
 public:
     explicit DockSpec(QWidget *parent = 0);
-private:
     SpecWave *waveform;
+private:
+
 };
 
 #endif // DOCKSPEC_H

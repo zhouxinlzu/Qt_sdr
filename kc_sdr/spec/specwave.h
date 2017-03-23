@@ -20,13 +20,14 @@ public:
 signals:
 
 public slots:
-protected:
-    void paintEvent(QPaintEvent *event);
+    void recvFftValue(quint32 u32_addr, quint16 u16_size);
 private:
     SpecBackground *p_background;
     SpecCurve *p_curve;
     QGraphicsScene *p_scene;
     struct disValCfgStr str_disValCfg;
+    QPointF *p_curveDisBuf;
+    bool    b_isMalloc;
 };
 
 #endif // SPECWAVE_H

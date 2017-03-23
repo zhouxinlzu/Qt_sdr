@@ -14,20 +14,20 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    dockspec.cpp \
-    specwave.cpp \
-    libfft.cpp \
-    specbackground.cpp \
-    speccurve.cpp \
-    engine.cpp
+    engine/engine.cpp \
+    spec/dockspec.cpp \
+    spec/specbackground.cpp \
+    spec/speccurve.cpp \
+    spec/specwave.cpp \
+    engine/libfft.cpp
 
 HEADERS  += mainwindow.h \
-    dockspec.h \
-    specwave.h \
-    libfft.h \
-    specbackground.h \
-    speccurve.h \
-    engine.h
+    engine/engine.h \
+    spec/dockspec.h \
+    spec/specbackground.h \
+    spec/speccurve.h \
+    spec/specwave.h \
+    engine/libfft.h
 
 FORMS    += mainwindow.ui
 

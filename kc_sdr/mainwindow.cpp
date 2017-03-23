@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "spec/specwave.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,7 +9,12 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->centralWidget->hide();
-    engineThread.start();
+    p_engineThread = new Engine(this);
+
+
+    connect(p_engineThread, &Engine::fftGenerated, ui->SpecWidget->waveform, &SpecWave::recvFftValue, Qt::QueuedConnection);
+
+    p_engineThread->start();
 }
 
 MainWindow::~MainWindow()

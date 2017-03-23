@@ -37,9 +37,6 @@ void SpecBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     qreal   f64_hlDiv = u16_height / (HL_NUMBER + 1);
     qreal   f64_vlDiv = u16_width / (VL_NUMBER + 1);
 
-#if DEBUG_BACKGROUND
-    qDebug() << "get background height" << u16_height << "width" << u16_width <<endl;
-#endif
     QPen outline(Qt::gray, 0, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
     painter->setPen(outline);
     QRectF rectangle = *p_rect;
