@@ -11,6 +11,8 @@ class Engine : public QThread
 public:
     explicit Engine(QObject * parent = 0);
     void stop();
+    qint16          i16_simAmp;
+    quint16         u16_simFreq;
 signals:
     void fftGenerated(quint32 u32_addr, quint16 u16_size);
 protected:

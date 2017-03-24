@@ -17,6 +17,14 @@ public:
     ~MainWindow();
 private slots:
     void on_action_SPEC_triggered();
+    void on_ampSlider_valueChanged(int value);
+
+    void on_freqSlider_valueChanged(int value);
+
+    void on_ampLineEdit_editingFinished();
+
+    void on_freqLineEdit_editingFinished();
+
 private:
     Ui::MainWindow *ui;
     Engine *p_engineThread;

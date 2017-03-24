@@ -15,8 +15,8 @@ SpecBackground::SpecBackground(quint16 u16_width, quint16 u16_height)
     f64_penWidth = 1;
     p_rect = new QRectF(0 - f64_penWidth / 2,
                         0 - f64_penWidth / 2,
-                        u16_width - 1 + f64_penWidth,
-                        u16_height - 1 + f64_penWidth);
+                        u16_width + f64_penWidth,
+                        u16_height + f64_penWidth);
     pen = QPen(Qt::gray, 0, Qt::DashDotDotLine, Qt::SquareCap, Qt::BevelJoin);
 }
 
@@ -52,3 +52,4 @@ void SpecBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         painter->drawLine((i + 1) * f64_vlDiv, 0, (i + 1) * f64_vlDiv, u16_height);
     }
 }
+

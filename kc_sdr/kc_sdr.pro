@@ -19,7 +19,9 @@ SOURCES += main.cpp\
     spec/specbackground.cpp \
     spec/speccurve.cpp \
     spec/specwave.cpp \
-    engine/libfft.cpp
+    engine/libfft.cpp \
+    spec/specview.cpp \
+    spec/specscene.cpp
 
 HEADERS  += mainwindow.h \
     engine/engine.h \
@@ -27,7 +29,9 @@ HEADERS  += mainwindow.h \
     spec/specbackground.h \
     spec/speccurve.h \
     spec/specwave.h \
-    engine/libfft.h
+    engine/libfft.h \
+    spec/specview.h \
+    spec/specscene.h
 
 FORMS    += mainwindow.ui
 

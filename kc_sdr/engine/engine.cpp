@@ -11,6 +11,9 @@ Engine::Engine(QObject *parent):QThread(parent)
 {
     b_stopped = false;
     resetFftSize(1024);
+
+    i16_simAmp = 10;
+    u16_simFreq = 100;
 }
 void Engine::run()
 {
@@ -45,86 +48,30 @@ void Engine::resetFftSize(quint16 u16_size)
 
 void Engine::iqGet()
 {
-    static float phase = 0.0f;
-    static float freq = 0.2f;
-    static int dir = 1;
-    static int chunkSize = 16;
-    static float noise = 0.1;
-    static float amp = 100;
-    static float fstep = 0.1;
+    static float noise = 0.7;
 
     for(int i = 0; i < u16_fftSize; i++)
     {
-        pf32_IQ[2 * i] = amp * cos(2 * M_PI * (float)i * 50 / (float)u16_fftSize);
-        pf32_IQ[2 * i + 1] = amp * sin(2 * M_PI * (float)i * 50 / (float)u16_fftSize);
+        float nphase = noise * ((float)qrand() / RAND_MAX - 0.5f);
+        pf32_IQ[2 * i] = (float)i16_simAmp * 0.001f  * cos(2 * M_PI * (float)i * u16_simFreq / (float)u16_fftSize) + 5 * cos(2 * M_PI * (float)i * u16_simFreq / (float)u16_fftSize + nphase);
+        pf32_IQ[2 * i + 1] = (float)i16_simAmp * 0.001f * sin(2 * M_PI * (float)i * u16_simFreq / (float)u16_fftSize)+ 5 * sin(2 * M_PI * (float)i * u16_simFreq / (float)u16_fftSize + nphase);
     }
-
-    //for(int i = 0; i < u16_fftSize / 2; i++)
-    //{
-    //    float nphase = noise * ((float)qrand() / RAND_MAX - 0.5f);
-    //    fftBuf[i] = amp * sin(phase + nphase);
-    //    fftBuf[i] = amp * sin(2 * M_PI * (float)i * 20 / ((float)u16_fftSize / 2));
-    //}
-
-    //for(int i = 0; i < chunkSize; i++)
-    //{
-    //    for(int i = 0; i < u16_fftSize; i++)
-    //    {
-    //        float nphase = noise * ((float)qrand() / RAND_MAX - 0.5f);
-
-    //        //numerical oscillator
-    //        float si = amp * cos(phase + nphase);
-    //        float sq = amp * sin(phase + nphase);
-
-
-    //        pf32_IQ[2 * i] = si;
-    //        pf32_IQ[2 * i + 1] = sq;
-
-    //        //phase accumulator
-    //        phase += freq;
-    //        if(phase > 2 * M_PI) phase -= 2.0f * (float)M_PI;
-    //        else if(phase < -2 * M_PI) phase += 2.0f * (float)M_PI;
-
-    //        //triangle freq sweep
-    //        freq += fstep * dir;
-    //        if(dir > 0)
-    //        {
-    //            if(freq >=  M_PI)
-    //            {
-    //                freq =  2*M_PI - freq;
-    //                dir = -1;
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if(freq <= -M_PI)
-    //            {
-    //                freq = -2*M_PI - freq;
-    //                dir = 1;
-    //            }
-    //        }
-    //    }
-    //}
-
 #if ENGINE_DBG
-    qDebug() << "Frequency(" << freq << ")";
+   // qDebug() << "Frequency(" << freq << ")";
 #endif
 }
 
 void Engine::doFft()
 {
-   // add window function here
-    alg_fft = FFT(u16_fftB);
+    //add window function here
     alg_fft.execSingleBuf(pf32_IQ, false);
     for(int i = 0; i < u16_fftSize; i++)
     {
         float f32_lev = sqrt(pf32_IQ[2 * i] * pf32_IQ[2 * i] + pf32_IQ[2 * i + 1] * pf32_IQ[2 * i + 1]);
-        //float f32_lev = sqrt(ibuf[2 * i] * ibuf[2 * i] + qbuf[2 * i]* qbuf[2 * i]);
-        qDebug() << "lev =" << f32_lev;
-        fftBuf[i] = 1 * log(f32_lev);
+        fftBuf[i] = 10 * log(f32_lev);
     }
+
 #if ENGINE_DBG
-    //qDebug() << "fft generated->" << fftBuf.data();
 #endif
     emit fftGenerated((quint32)fftBuf.data(), fftBuf.size() / 2);
 }

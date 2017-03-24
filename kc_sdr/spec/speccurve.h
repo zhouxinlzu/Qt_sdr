@@ -11,6 +11,8 @@ public:
     QRectF boundingRect()const;
     void curveGet(QPointF  *p_buf, quint16 u16_size);
     void paint(QPainter * painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+public slots:
+
 private:
     qreal   f64_penWidth;
     QRectF  *p_rect;

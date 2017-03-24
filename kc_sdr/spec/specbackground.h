@@ -10,6 +10,8 @@ public:
     SpecBackground(quint16 u16_width, quint16 u16_height);
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+public slots:
+
 private:
     qreal   f64_penWidth;
     QRectF  *p_rect;
