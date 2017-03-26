@@ -7,15 +7,9 @@
 #include "speccurve.h"
 #include "specscene.h"
 #include "specview.h"
+#include "mousetrace.h"
 
-struct disValCfgStr
-{
-    qint16  i16_ref;
-    qreal   f64_resolution;
-    quint16 u16_width;
-    quint16 u16_height;
-    float   f32_min;
-};
+
 class SpecWave : public QWidget
 {
     Q_OBJECT
@@ -33,6 +27,7 @@ private:
     SpecScene *p_scene;
     struct disValCfgStr str_disValCfg;
     QPointF *p_curveDisBuf;
+    MouseTrace *p_mouse;
     bool    b_isMalloc;
 };
 

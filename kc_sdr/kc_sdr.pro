@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     spec/specwave.cpp \
     engine/libfft.cpp \
     spec/specview.cpp \
-    spec/specscene.cpp
+    spec/specscene.cpp \
+    spec/mousetrace.cpp
 
 HEADERS  += mainwindow.h \
     engine/engine.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     spec/specwave.h \
     engine/libfft.h \
     spec/specview.h \
-    spec/specscene.h
+    spec/specscene.h \
+    spec/mousetrace.h
 
 FORMS    += mainwindow.ui
 

@@ -1,5 +1,6 @@
 #include "engine.h"
 #include <QtMath>
+#include <cstdint>
 
 #define ENGINE_DBG  1
 
@@ -24,10 +25,17 @@ void Engine::run()
         msleep(50);
     }
     b_stopped = false;
+#if ENGINE_DBG
+    qDebug() << "engine thread stop!";
+#endif
 }
 void Engine::stop()
 {
     b_stopped = true;
+    while(Engine::isRunning() == true)
+    {
+
+    }
 }
 
 void Engine::resetFftSize(quint16 u16_size)
@@ -73,5 +81,5 @@ void Engine::doFft()
 
 #if ENGINE_DBG
 #endif
-    emit fftGenerated((quint32)fftBuf.data(), fftBuf.size() / 2);
+    emit fftGenerated((intptr_t)fftBuf.data(), fftBuf.size() / 2);
 }

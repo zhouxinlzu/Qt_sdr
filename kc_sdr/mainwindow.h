@@ -15,6 +15,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void closeEvent(QCloseEvent *event);
 private slots:
     void on_action_SPEC_triggered();
     void on_ampSlider_valueChanged(int value);

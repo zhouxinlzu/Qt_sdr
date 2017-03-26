@@ -15,26 +15,44 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
      * parameter set
      *
      */
-    str_disValCfg.i16_ref = 10;
-    str_disValCfg.f64_resolution = 0.1f;
+    str_disValCfg.f32_disRef = 10;
+    str_disValCfg.f64_ampResolution = 0.1f;
     str_disValCfg.u16_width = 512;
     str_disValCfg.u16_height = 400;
-    str_disValCfg.f32_min = str_disValCfg.i16_ref - str_disValCfg.u16_height * str_disValCfg.f64_resolution;
+    str_disValCfg.f32_disMin = str_disValCfg.f32_disRef - str_disValCfg.u16_height * str_disValCfg.f64_ampResolution;
+    str_disValCfg.f64_strFreq = 0;
+    str_disValCfg.f64_freqResolution = 1;
+    str_disValCfg.u8_hlNum= 6;
+    str_disValCfg.u8_vlNum= 5;
+    str_disValCfg.f64_ampResolutionMax = 0.5f;
+    str_disValCfg.f64_ampResolutionMin = 0.01f;
+
     b_isMalloc = false;
+
 
     p_scene = new SpecScene(this);
     p_background = new SpecBackground(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_curve = new SpecCurve(str_disValCfg.u16_width, str_disValCfg.u16_height);
-    p_scene->setSceneRect(0, 0, str_disValCfg.u16_width , str_disValCfg.u16_height );
+    p_mouse = new MouseTrace(str_disValCfg.u16_width, str_disValCfg.u16_height);
+
+    p_background->waveValGet((intptr_t)&str_disValCfg);
+    p_mouse->waveValGet((intptr_t)&str_disValCfg);
+
+    p_scene->setSceneRect(0, 0, str_disValCfg.u16_width + 10 , str_disValCfg.u16_height + 10);
 
     p_scene->setBackgroundBrush(QColor(0, 0, 0, 255));
     p_scene->addItem(p_background);
     p_scene->addItem(p_curve);
+    p_scene->addItem(p_mouse);
+
+    p_background->setPos(10, 0);
+    p_curve->setPos(10,0);
+    p_mouse->setPos(10, 0);
 
     p_view = new SpecView;
     p_view->setScene(p_scene);
-    p_view->resize(str_disValCfg.u16_width + OUTLINE_WIDTH, str_disValCfg.u16_height + OUTLINE_WIDTH);
-    p_view->displayAreaGet(str_disValCfg.u16_width + OUTLINE_WIDTH, str_disValCfg.u16_height + OUTLINE_WIDTH);
+    p_view->resize(str_disValCfg.u16_width + OUTLINE_WIDTH + 10, str_disValCfg.u16_height + OUTLINE_WIDTH + 10);
+    p_view->displayAreaGet(str_disValCfg.u16_width + OUTLINE_WIDTH + 10, str_disValCfg.u16_height + OUTLINE_WIDTH + 10);
     p_view->show();
 
     QHBoxLayout *layout = new QHBoxLayout;
@@ -49,7 +67,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
 
 void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
 {
-    float *pf32_fftBuf = (float *)u32_addr;
+    str_disValCfg.pf32_fftBuf = (float *)u32_addr;
 #if DEBUG_SPEC
 //    qDebug() << "widget size:" << SpecWave::width() << SpecWave::height();
 //    qDebug() << "view size:" << p_view->width() << p_view->height();
@@ -68,9 +86,8 @@ void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
         b_isMalloc = true;
         for(quint16 i = 0; i < u16_size; i++)
         {
-            if(i == 100)
-            qDebug() << "fftval" << pf32_fftBuf[i];
-            qint16 i16_lev = str_disValCfg.u16_height - (pf32_fftBuf[i] - str_disValCfg.f32_min) / str_disValCfg.f64_resolution;
+            qint16 i16_lev = str_disValCfg.u16_height - (str_disValCfg.pf32_fftBuf[i] - str_disValCfg.f32_disMin) /\
+                             str_disValCfg.f64_ampResolution;
             if(i16_lev >=  str_disValCfg.u16_height)
             {
                 i16_lev =  str_disValCfg.u16_height;

@@ -3,9 +3,6 @@
 
 #define DEBUG_BACKGROUND    1
 
-#define HL_NUMBER           (5)
-#define VL_NUMBER           (5)
-
 #if DEBUG_BACKGROUND
 #include <QDebug>
 #endif
@@ -34,8 +31,8 @@ void SpecBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
     quint16 u16_height = p_rect->height();
     quint16 u16_width = p_rect->width();
-    qreal   f64_hlDiv = u16_height / (HL_NUMBER + 1);
-    qreal   f64_vlDiv = u16_width / (VL_NUMBER + 1);
+    qreal   f64_hlDiv = u16_height / (pstr_disVal->u8_hlNum + 1);
+    qreal   f64_vlDiv = u16_width / (pstr_disVal->u8_vlNum + 1);
 
     QPen outline(Qt::gray, 0, Qt::SolidLine, Qt::SquareCap, Qt::BevelJoin);
     painter->setPen(outline);
@@ -43,13 +40,18 @@ void SpecBackground::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->drawRect(rectangle);
     painter->setPen(pen);
 
-    for(quint8 i = 0; i < HL_NUMBER; i++)
+    for(quint8 i = 0; i < pstr_disVal->u8_hlNum; i++)
     {
         painter->drawLine(0, (i + 1) * f64_hlDiv, u16_width, (i + 1) * f64_hlDiv);
     }
-    for(quint8 i = 0; i < VL_NUMBER; i++)
+    for(quint8 i = 0; i < pstr_disVal->u8_vlNum; i++)
     {
         painter->drawLine((i + 1) * f64_vlDiv, 0, (i + 1) * f64_vlDiv, u16_height);
     }
+}
+
+void SpecBackground::waveValGet(intptr_t valAddr)
+{
+    pstr_disVal = (struct disValCfgStr *)valAddr;
 }
 

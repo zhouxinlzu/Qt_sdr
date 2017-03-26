@@ -15,11 +15,21 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(p_engineThread, &Engine::fftGenerated, ui->waveform, &SpecWave::recvFftValue, Qt::QueuedConnection);
 
     p_engineThread->start();
+
+    ui->ampLineEdit->setText(QString::number(ui->ampSlider->value(), 10));
+    ui->freqLineEdit->setText(QString::number(ui->freqSlider->value(), 10));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    Q_UNUSED(event);
+
+    p_engineThread->stop();
 }
 
 void MainWindow::on_action_SPEC_triggered()
