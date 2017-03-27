@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #define ENGINE_DBG  1
+#define SIMULATE   1
 
 #if ENGINE_DBG
 #include <QDebug>
@@ -10,18 +11,39 @@
 
 Engine::Engine(QObject *parent):QThread(parent)
 {
+    p_interfaceTcp = new Interface;
+    p_interfaceTcp->connect2Server();
+    b_isBufferOne = true;
+    b_isConnected = false;
     b_stopped = false;
     resetFftSize(1024);
 
+    p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf1.data());
+
     i16_simAmp = 10;
     u16_simFreq = 100;
+
+    connect(p_interfaceTcp, &Interface::startTransfer, this, &Engine::startGetIq);
+    connect(p_interfaceTcp, &Interface::receivedPacket, this, &Engine::iqGet);
 }
 void Engine::run()
 {
     while(b_stopped == false)
     {
+        engineStatusTrace();
+#if SIMULATE
         iqGet();
         doFft();
+#else
+
+        if(b_isConnected == true)
+        {
+        }
+        else
+        {
+
+        }
+#endif
         msleep(50);
     }
     b_stopped = false;
@@ -31,10 +53,25 @@ void Engine::run()
 }
 void Engine::stop()
 {
+    p_interfaceTcp->disConnect2Server();
     b_stopped = true;
     while(Engine::isRunning() == true)
     {
 
+    }
+}
+
+void Engine::engineStatusTrace()
+{
+    if(p_interfaceTcp->connectStatus() == true)
+    {
+        b_isConnected = true;
+        emit connected2Device();
+    }
+    else
+    {
+        b_isConnected = false;
+        emit disconnected2Device();
     }
 }
 
@@ -49,13 +86,25 @@ void Engine::resetFftSize(quint16 u16_size)
     alg_fft = FFT(u16_fftB);
     pf32_IQ = dataIqBuf1.data();
 
+
+
 #if ENGINE_DBG
+    qDebug() << "buf1 addr" << dataIqBuf1.data() << "buf2 addr" << dataIqBuf2.data();
     qDebug() << "get ffB:" << u16_fftB << " fftSize:" << u16_fftSize;
 #endif
 }
 
+void Engine::startGetIq()
+{
+#if ENGINE_DBG
+    qDebug() << "send command: get iq";
+#endif
+    p_interfaceTcp->send2Server(CMD_GET_IQ, 0);
+}
+
 void Engine::iqGet()
 {
+#if SIMULATE
     static float noise = 0.7;
 
     for(int i = 0; i < u16_fftSize; i++)
@@ -66,6 +115,20 @@ void Engine::iqGet()
     }
 #if ENGINE_DBG
    // qDebug() << "Frequency(" << freq << ")";
+#endif
+#else
+    if(b_isBufferOne == true)
+    {
+        b_isBufferOne = false;
+        p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf2.data());
+        pf32_IQ = dataIqBuf1.data();
+    }
+    else
+    {
+        b_isBufferOne = true;
+        p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf1.data());
+        pf32_IQ = dataIqBuf2.data();
+    }
 #endif
 }
 

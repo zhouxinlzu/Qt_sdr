@@ -65,7 +65,7 @@ void MouseTrace::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 
 
         QPointF temp = event->pos() - mouse_offset;
-        qDebug() <<"move" << temp.ry();
+        //qDebug() <<"move" << temp.ry();
 
     update();
 }

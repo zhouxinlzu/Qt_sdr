@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QVector>
 #include "engine/libfft.h"
+#include "engine/interface.h"
 
 class Engine : public QThread
 {
@@ -11,13 +12,17 @@ class Engine : public QThread
 public:
     explicit Engine(QObject * parent = 0);
     void stop();
+    void engineStatusTrace(void);
     qint16          i16_simAmp;
     quint16         u16_simFreq;
 signals:
     void fftGenerated(intptr_t u32_addr, quint16 u16_size);
+    void connected2Device(void);
+    void disconnected2Device(void);
 protected:
     void run();
 private:
+    Interface       *p_interfaceTcp;
     volatile bool   b_stopped;
     quint16         u16_fftSize;
     quint16         u16_fftB;
@@ -26,9 +31,13 @@ private:
     QVector<float>  dataIqBuf2;
     QVector<float>  fftBuf;
     FFT             alg_fft;
-    void iqGet(void);
+    bool            b_isConnected;
+    bool            b_isBufferOne;
     void doFft(void);
     void resetFftSize(quint16 u16_size);
+private slots:
+    void startGetIq(void);
+    void iqGet(void);
 };
 
 #endif // ENGINE_H

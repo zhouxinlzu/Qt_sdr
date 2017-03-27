@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     engine/libfft.cpp \
     spec/specview.cpp \
     spec/specscene.cpp \
-    spec/mousetrace.cpp
+    spec/mousetrace.cpp \
+    engine/interface.cpp
 
 HEADERS  += mainwindow.h \
     engine/engine.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     engine/libfft.h \
     spec/specview.h \
     spec/specscene.h \
-    spec/mousetrace.h
+    spec/mousetrace.h \
+    engine/interface.h
 
 FORMS    += mainwindow.ui
 
