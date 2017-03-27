@@ -12,7 +12,7 @@
 SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
 {
     /*!
-     * parameter set
+     * scene parameter set
      *
      */
     str_disValCfg.f32_disRef = 10;
@@ -26,33 +26,50 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     str_disValCfg.u8_vlNum= 5;
     str_disValCfg.f64_ampResolutionMax = 0.5f;
     str_disValCfg.f64_ampResolutionMin = 0.01f;
+    str_disValCfg.u8_ampRulerWidth = 50;
+    str_disValCfg.u8_freqRulerHeight = 50;
 
     b_isMalloc = false;
 
-
+    /*!
+     * set item's parameter
+     */
     p_scene = new SpecScene(this);
     p_background = new SpecBackground(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_curve = new SpecCurve(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_mouse = new MouseTrace(str_disValCfg.u16_width, str_disValCfg.u16_height);
+    p_ampRuler = new Rulers(str_disValCfg.u8_ampRulerWidth, str_disValCfg.u16_height, true);
+    p_freqRuler = new Rulers(str_disValCfg.u16_width, str_disValCfg.u8_freqRulerHeight, false);
 
     p_background->waveValGet((intptr_t)&str_disValCfg);
     p_mouse->waveValGet((intptr_t)&str_disValCfg);
+    p_ampRuler->waveValGet((intptr_t)&str_disValCfg);
+    p_freqRuler->waveValGet((intptr_t)&str_disValCfg);
 
-    p_scene->setSceneRect(0, 0, str_disValCfg.u16_width + 10 , str_disValCfg.u16_height + 10);
+    p_scene->setSceneRect(0, 0, str_disValCfg.u16_width + str_disValCfg.u8_ampRulerWidth ,
+                          str_disValCfg.u16_height + str_disValCfg.u8_freqRulerHeight);
 
     p_scene->setBackgroundBrush(QColor(0, 0, 0, 255));
     p_scene->addItem(p_background);
+    p_scene->addItem(p_ampRuler);
+    p_scene->addItem(p_freqRuler);
     p_scene->addItem(p_curve);
     p_scene->addItem(p_mouse);
 
-    p_background->setPos(10, 0);
-    p_curve->setPos(10,0);
-    p_mouse->setPos(10, 0);
 
+    p_background->setPos(str_disValCfg.u8_ampRulerWidth, 0);
+    p_curve->setPos(str_disValCfg.u8_ampRulerWidth,0);
+    p_mouse->setPos(str_disValCfg.u8_ampRulerWidth, 0);
+
+    /*!
+     *  view parameter set
+     */
     p_view = new SpecView;
     p_view->setScene(p_scene);
-    p_view->resize(str_disValCfg.u16_width + OUTLINE_WIDTH + 10, str_disValCfg.u16_height + OUTLINE_WIDTH + 10);
-    p_view->displayAreaGet(str_disValCfg.u16_width + OUTLINE_WIDTH + 10, str_disValCfg.u16_height + OUTLINE_WIDTH + 10);
+    p_view->resize(str_disValCfg.u16_width + OUTLINE_WIDTH + str_disValCfg.u8_ampRulerWidth,
+                   str_disValCfg.u16_height + OUTLINE_WIDTH + str_disValCfg.u8_freqRulerHeight);
+    p_view->displayAreaGet(str_disValCfg.u16_width + OUTLINE_WIDTH + str_disValCfg.u8_ampRulerWidth,
+                           str_disValCfg.u16_height + OUTLINE_WIDTH + str_disValCfg.u8_freqRulerHeight);
     p_view->show();
 
     QHBoxLayout *layout = new QHBoxLayout;

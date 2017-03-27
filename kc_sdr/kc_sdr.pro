@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     spec/specview.cpp \
     spec/specscene.cpp \
     spec/mousetrace.cpp \
-    engine/interface.cpp
+    engine/interface.cpp \
+    spec/rulers.cpp
 
 HEADERS  += mainwindow.h \
     engine/engine.h \
@@ -35,7 +36,8 @@ HEADERS  += mainwindow.h \
     spec/specview.h \
     spec/specscene.h \
     spec/mousetrace.h \
-    engine/interface.h
+    engine/interface.h \
+    spec/rulers.h
 
 FORMS    += mainwindow.ui
 

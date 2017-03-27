@@ -24,6 +24,9 @@ struct disValCfgStr
 
     quint8  u8_hlNum;
     quint8  u8_vlNum;
+
+    quint8  u8_ampRulerWidth;
+    quint8  u8_freqRulerHeight;
 };
 class MouseTrace : public QGraphicsItem
 {
