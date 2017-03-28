@@ -49,7 +49,7 @@ void Rulers::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
             float f32_amp = pstr_disVal->f32_disRef - pstr_disVal->f64_ampResolution *
                             (i + 1) * f64_hlDiv;
-            qDebug() <<"rect" << *p_rect << "pos "<< pos.y() <<"hldiv" << f64_hlDiv <<"amp" << f32_amp;
+            //qDebug() <<"rect" << *p_rect << "pos "<< pos.y() <<"hldiv" << f64_hlDiv <<"amp" << f32_amp;
             //painter->drawText(pos, QString::number(f32_amp,'f', 2));
             painter->drawText(pos, "12");
             painter->drawLine(0, (i + 1) * f64_hlDiv, u16_width, (i + 1) * f64_hlDiv);

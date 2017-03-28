@@ -16,7 +16,6 @@ class SpecWave : public QWidget
     Q_OBJECT
 public:
     explicit SpecWave(QWidget *parent = 0);
-
 signals:
 
 public slots:

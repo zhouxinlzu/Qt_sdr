@@ -4,7 +4,11 @@
 #include <QtNetwork>
 #include <QAbstractSocket>
 
-
+typedef enum
+{
+    INT_16,
+    FLOAT_32,
+}dataTypeEnum;
 typedef enum __attribute__((gcc_struct, packed))
 {
     CMD_SET_FREQ,
@@ -29,6 +33,8 @@ public:
     void disConnect2Server(void);
     void send2Server(cmdEnum en_cmd,qint64 i64_data);
     void recvBufSet(intptr_t u32_addr);
+    dataTypeEnum dataTypeGet(void);
+    void dataIqPair(quint32 u32_iqPair);
 signals:
     void startTransfer(void);
     void receivedPacket(void);
@@ -38,10 +44,13 @@ public slots:
     void readMessage(void);
     void displayError(QAbstractSocket::SocketError);
 private:
-    QTcpSocket  *p_socket;
-    QString     message;
+    QTcpSocket      *p_socket;
+    QString         message;
+    dataTypeEnum    en_iqType;
     quint32     u32_blockSize;
+    quint32     u32_recvIqPair;
     float       *pf32_recvBuf;
+    qint16      *pi16_recvBuf;
 };
 
 #endif // INTERFACE_H

@@ -7,7 +7,7 @@
 #include <QDebug>
 #endif
 
-#define OUTLINE_WIDTH       (2)
+#define OUTLINE_WIDTH       (4)
 
 SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
 {
@@ -17,7 +17,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
      */
     str_disValCfg.f32_disRef = 10;
     str_disValCfg.f64_ampResolution = 0.1f;
-    str_disValCfg.u16_width = 512;
+    str_disValCfg.u16_width = 1024;
     str_disValCfg.u16_height = 400;
     str_disValCfg.f32_disMin = str_disValCfg.f32_disRef - str_disValCfg.u16_height * str_disValCfg.f64_ampResolution;
     str_disValCfg.f64_strFreq = 0;
@@ -85,12 +85,14 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
 void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
 {
     str_disValCfg.pf32_fftBuf = (float *)u32_addr;
+
 #if DEBUG_SPEC
 //    qDebug() << "widget size:" << SpecWave::width() << SpecWave::height();
 //    qDebug() << "view size:" << p_view->width() << p_view->height();
 //    qDebug() << "curve size:" << p_curve->boundingRect();
 //    qDebug() << "background size:" << p_background->boundingRect();
 //    qDebug() << "scene size:" << p_scene->width() << p_scene->height();
+//    qDebug() << "fft size = " << u16_size;
 #endif
     if(b_isMalloc == true)
     {
@@ -103,8 +105,9 @@ void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
         b_isMalloc = true;
         for(quint16 i = 0; i < u16_size; i++)
         {
-            qint16 i16_lev = str_disValCfg.u16_height - (str_disValCfg.pf32_fftBuf[i] - str_disValCfg.f32_disMin) /\
-                             str_disValCfg.f64_ampResolution;
+            qint16   i16_lev = str_disValCfg.u16_height - (str_disValCfg.pf32_fftBuf[i] - str_disValCfg.f32_disMin) /\
+                        str_disValCfg.f64_ampResolution;
+
             if(i16_lev >=  str_disValCfg.u16_height)
             {
                 i16_lev =  str_disValCfg.u16_height;

@@ -4,6 +4,7 @@
 #include <QGraphicsItem>
 #include <QPen>
 #include <cstdint>
+
 struct disValCfgStr
 {
     float   f32_disRef;

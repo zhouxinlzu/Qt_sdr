@@ -178,3 +178,70 @@ void FFT::execSingleBuf(float x[],bool inv )
         }
     }
 }
+/* fft - a fast Fourier transform routine
+**
+** x input real and image buffer [r i r i ....]
+** y output real and image buffer [r i r i ....]
+** inv  flag for inverse
+*/
+void FFT::execSingleBuf(int16_t x[],float y[],bool inv )
+{
+    int n, n2, i, k, kn2, l, p;
+    float ang, s, c, tr, ti;
+    //double ds, dc;
+
+    n = 1 << bits;
+    n2 = n / 2;
+
+    for ( l = 0; l < bits; ++l )
+    {
+        for ( k = 0; k < n; k += n2 )
+        {
+            for( i = 0; i < n2; ++i, ++k )
+            {
+                p = bitreverse[k / n2];
+                ang = 6.283185 * p / n;
+
+                c = cos( ang );
+                s = sin( ang );
+
+                kn2 = k + n2;
+                if ( inv )
+                    s = -s;
+                tr = x[2 * kn2] * c + x[2 * kn2 + 1] * s;
+                ti = x[2 * kn2 + 1] * c - x[2 * kn2] * s;
+                x[2 * kn2] = x[2 * k] - tr;
+                x[2 * kn2 + 1] = x[2 * k + 1] - ti;
+                x[2 * k] += tr;
+                x[2 * k +1] += ti;
+            }
+        }
+        n2 /= 2;
+    }
+
+    for ( k = 0; k < n; ++k )
+    {
+        i = bitreverse[k];
+        if ( i <= k )
+            continue;
+        tr = x[2 * k];
+        ti = x[2 * k + 1];
+        y[2 * k] = x[ 2 * i];
+        y[2 * k + 1] = x[2 * i + 1];
+        y[2 * i] = tr;
+        y[2 * i + 1] = ti;
+    }
+
+    /* Finally, multiply each value by 1/n, if this is the forward transform. */
+    if ( ! inv )
+    {
+        register float f;
+
+        f = 1.0 / n;
+        for( i = 0; i < n ; ++i )
+        {
+            y[2 * i] *= f;
+            y[2 * i + 1] *= f;
+        }
+    }
+}

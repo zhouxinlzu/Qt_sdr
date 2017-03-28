@@ -21,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     p_engineThread->start();
 
 
-
     ui->ampLineEdit->setText(QString::number(ui->ampSlider->value(), 10));
     ui->freqLineEdit->setText(QString::number(ui->freqSlider->value(), 10));
 }

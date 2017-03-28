@@ -5,6 +5,7 @@
 #include <QVector>
 #include "engine/libfft.h"
 #include "engine/interface.h"
+#include "spec/mousetrace.h"
 
 class Engine : public QThread
 {
@@ -15,6 +16,7 @@ public:
     void engineStatusTrace(void);
     qint16          i16_simAmp;
     quint16         u16_simFreq;
+    void recvBufSet(void);
 signals:
     void fftGenerated(intptr_t u32_addr, quint16 u16_size);
     void connected2Device(void);
@@ -30,9 +32,15 @@ private:
     QVector<float>  dataIqBuf1;
     QVector<float>  dataIqBuf2;
     QVector<float>  fftBuf;
+
+    qint16           *pi16_IQ;
+    QVector<qint16>  i16_dataIqBuf1;
+    QVector<qint16>  i16_dataIqBuf2;
+
     FFT             alg_fft;
     bool            b_isConnected;
     bool            b_isBufferOne;
+    dataTypeEnum    en_iqType;
     void doFft(void);
     void resetFftSize(quint16 u16_size);
 private slots:

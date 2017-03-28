@@ -13,7 +13,7 @@ Interface::Interface(QObject *parent) :
 //    qDebug() << "localHostName: " << localHostName << endl
 //             << "ip address: " << info.addresses();
 //    QHostInfo::lookupHost("box", this, SLOT(deviceLookup(QHostInfo)));
-
+    en_iqType = INT_16;//INT_16;
     p_socket = new QTcpSocket(this);
     connect(p_socket, &QTcpSocket::readyRead, this, &Interface::readMessage);
     connect(p_socket, &QTcpSocket::connected, this, &Interface::connectSuccess);
@@ -38,9 +38,20 @@ Interface::Interface(QObject *parent) :
 
 void Interface::connect2Server()
 {
-    u32_blockSize = 1024;
+    switch(en_iqType)
+    {
+    case INT_16:
+    {
+        u32_blockSize = sizeof(qint16) * u32_recvIqPair * 2;
+    }break;
+    case FLOAT_32:
+    {
+        u32_blockSize = sizeof(float) * u32_recvIqPair * 2;
+    }break;
+    }
+    qDebug() << "recv size " << u32_blockSize;
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.11", 60902);
+    p_socket->connectToHost("192.168.11.17", 60902);
 }
 
 bool Interface::connectStatus()
@@ -76,8 +87,30 @@ void Interface::send2Server(cmdEnum en_cmd, qint64 i64_data)
 
 void Interface::recvBufSet(intptr_t u32_addr)
 {
-    pf32_recvBuf = (float *)u32_addr;
-    qDebug() << "recv buffer addr " << pf32_recvBuf;
+    switch(en_iqType)
+    {
+    case INT_16:
+    {
+        pi16_recvBuf = (qint16 *)u32_addr;
+ //       qDebug() <<  "recv buffer addr " << pi16_recvBuf;
+    }break;
+    case FLOAT_32:
+    {
+        pf32_recvBuf = (float *)u32_addr;
+        qDebug() << "get addr "<< u32_addr << "recv buffer addr " << pf32_recvBuf;
+    }break;
+    default:break;
+    }
+}
+
+dataTypeEnum Interface::dataTypeGet(void)
+{
+    return en_iqType;
+}
+
+void Interface::dataIqPair(quint32 u32_iqPair)
+{
+    u32_recvIqPair = u32_iqPair;
 }
 
 void Interface::connectSuccess()
@@ -94,9 +127,23 @@ void Interface::readMessage()
         return;
     }
     int readnum = 0;
-    if((readnum = input.readRawData((char *)pf32_recvBuf, u32_blockSize)) < u32_blockSize)
+    switch(en_iqType)
     {
-        qDebug() << "receive num ->" << readnum;
+    case INT_16:
+    {
+   //     qDebug() << "save buffer" << u32_blockSize;
+        if((readnum = input.readRawData((char *)pi16_recvBuf, u32_blockSize)) < u32_blockSize)
+        {
+            qDebug() << "receive num ->" << readnum;
+        }
+    }break;
+    case FLOAT_32:
+    {
+        if((readnum = input.readRawData((char *)pf32_recvBuf, u32_blockSize)) < u32_blockSize)
+        {
+            qDebug() << "receive num ->" << readnum;
+        }
+    }break;
     }
     emit receivedPacket();
 }
