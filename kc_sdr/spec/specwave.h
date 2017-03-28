@@ -31,6 +31,7 @@ private:
     QPointF             *p_curveDisBuf;
     MouseTrace          *p_mouse;
     bool                b_isMalloc;
+    void disBufReset(quint16 u16_size);
 };
 
 #endif // SPECWAVE_H

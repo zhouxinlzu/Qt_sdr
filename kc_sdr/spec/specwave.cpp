@@ -31,6 +31,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
 
     b_isMalloc = false;
 
+    disBufReset(str_disValCfg.u16_width);
     /*!
      * set item's parameter
      */
@@ -94,12 +95,6 @@ void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
 //    qDebug() << "scene size:" << p_scene->width() << p_scene->height();
 //    qDebug() << "fft size = " << u16_size;
 #endif
-    if(b_isMalloc == true)
-    {
-        b_isMalloc = false;
-        free(p_curveDisBuf);
-    }
-    p_curveDisBuf = (QPointF *)malloc(sizeof(QPointF) * u16_size);
     if(p_curveDisBuf != NULL)
     {
         b_isMalloc = true;
@@ -128,5 +123,15 @@ void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
         qDebug() << "can not malloc curve display buffer";
 #endif
     }
+}
+
+void SpecWave::disBufReset(quint16 u16_size)
+{
+    if(b_isMalloc == true)
+    {
+        b_isMalloc = false;
+        free(p_curveDisBuf);
+    }
+    p_curveDisBuf = (QPointF *)malloc(sizeof(QPointF) * u16_size);
 }
 
