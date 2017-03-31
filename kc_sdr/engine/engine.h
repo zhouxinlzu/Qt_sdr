@@ -40,9 +40,11 @@ private:
     FFT             alg_fft;
     bool            b_isConnected;
     bool            b_isBufferOne;
+    bool            b_isFftValid;
     dataTypeEnum    en_iqType;
     void doFft(void);
     void resetFftSize(quint16 u16_size);
+    void refFftDisplay(void);
 private slots:
     void startGetIq(void);
     void iqGet(void);

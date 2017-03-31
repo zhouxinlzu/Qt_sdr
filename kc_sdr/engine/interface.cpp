@@ -51,7 +51,7 @@ void Interface::connect2Server()
     }
     qDebug() << "recv size " << u32_blockSize;
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.17", 60902);
+    p_socket->connectToHost("192.168.11.7", 60902);
 }
 
 bool Interface::connectStatus()
@@ -126,6 +126,7 @@ void Interface::readMessage()
     {
         return;
     }
+    qDebug() << "!!!!!!reveived "<< u32_blockSize;
     int readnum = 0;
     switch(en_iqType)
     {

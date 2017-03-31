@@ -9,6 +9,8 @@
 #include <QDebug>
 #endif
 
+#define IQ_PAIR     (204800)
+
 Engine::Engine(QObject *parent):QThread(parent)
 {
     p_interfaceTcp = new Interface;
@@ -22,6 +24,7 @@ Engine::Engine(QObject *parent):QThread(parent)
     b_isBufferOne = true;
     b_isConnected = false;
     b_stopped = false;
+    b_isFftValid = false;
 
 
     i16_simAmp = 10;
@@ -42,6 +45,7 @@ void Engine::run()
 
         if(b_isConnected == true)
         {
+            refFftDisplay();
         }
         else
         {
@@ -100,16 +104,16 @@ void Engine::resetFftSize(quint16 u16_size)
     u16_fftB = qFloor(qLn(u16_size) / qLn(2));
     u16_fftSize = qRound(qPow(2, u16_fftB));
 
-    p_interfaceTcp->dataIqPair(u16_fftSize);
+    alg_fft = FFT(u16_fftB);
+    p_interfaceTcp->dataIqPair(IQ_PAIR);
     switch(en_iqType)
     {
     case INT_16:
     {
-        i16_dataIqBuf1.resize(2 * u16_fftSize);
-        i16_dataIqBuf2.resize(2 * u16_fftSize);
-        dataIqBuf1.resize(2 * u16_fftSize);
-        alg_fft = FFT(u16_fftB);
-        fftBuf.resize(u16_fftSize);
+        i16_dataIqBuf1.resize(2 * IQ_PAIR);
+        i16_dataIqBuf2.resize(2 * IQ_PAIR);
+        dataIqBuf1.resize(2 * IQ_PAIR);
+        fftBuf.resize(IQ_PAIR);
         pi16_IQ = i16_dataIqBuf1.data();
         pf32_IQ = dataIqBuf1.data();
 #if ENGINE_DBG
@@ -119,10 +123,9 @@ void Engine::resetFftSize(quint16 u16_size)
     }break;
     case FLOAT_32:
     {
-        dataIqBuf1.resize(2 * u16_fftSize);
-        dataIqBuf2.resize(2 * u16_fftSize);
-        fftBuf.resize(u16_fftSize);
-        alg_fft = FFT(u16_fftB);
+        dataIqBuf1.resize(2 * IQ_PAIR);
+        dataIqBuf2.resize(2 * IQ_PAIR);
+        fftBuf.resize(IQ_PAIR);
         pf32_IQ = dataIqBuf1.data();
 #if ENGINE_DBG
     qDebug() << "buf1 addr" << dataIqBuf1.data() << "buf2 addr" << dataIqBuf2.data();
@@ -159,9 +162,6 @@ void Engine::iqGet()
    // qDebug() << "Frequency(" << freq << ")";
 #endif
 #else
-#if ENGINE_DBG
-   // qDebug() << "recv iq data";
-#endif
     if(b_isBufferOne == true)
     {
         b_isBufferOne = false;
@@ -209,15 +209,17 @@ void Engine::doFft()
     {
     case INT_16:
     {
-        for(int i = 0; i < u16_fftSize; i++)
+        for(int i = 0; i < IQ_PAIR; i++)
         {
             pf32_IQ[2 * i] = pi16_IQ[2 * i];
             pf32_IQ[2 * i + 1] = pi16_IQ[2 * i + 1];
         }
         //add window function here
+//        for(int i = 0; i < IQ_PAIR / u16_fftSize; i++)
+//        {
+//            alg_fft.execSingleBuf(pf32_IQ + u16_fftSize * i, false);
+//        }
         alg_fft.execSingleBuf(pf32_IQ, false);
-
-        //alg_fft.execSingleBuf(pi16_IQ, pf32_IQ, false);
     }break;
     case FLOAT_32:
     {
@@ -225,10 +227,27 @@ void Engine::doFft()
         alg_fft.execSingleBuf(pf32_IQ, false);
     }break;
     }
-    for(int i = 0; i < u16_fftSize; i++)
+    for(int i = 0; i < IQ_PAIR / u16_fftSize; i++)
     {
-        float f32_lev = sqrt(pf32_IQ[2 * i] * pf32_IQ[2 * i] + pf32_IQ[2 * i + 1] * pf32_IQ[2 * i + 1]);
-        fftBuf[i] = 10 * log(f32_lev);
+        float *pf32_buf = pf32_IQ + i * u16_fftSize;
+        uint32_t u32_index = i * u16_fftSize;
+        for(int j = 0; j < u16_fftSize; j++)
+        {
+            //! log(sqrt(x)) = (1/2)log(x)
+            float f32_lev = pf32_buf[2 * j] * pf32_buf[2 * j] + pf32_buf[2 * j + 1] * pf32_buf[2 * j + 1];
+            //!sqrt(a)--> dB = 20 * log(a) = 10 * log(a)
+            fftBuf[u32_index + j] = 10 * log(f32_lev);
+        }
     }
-    emit fftGenerated((intptr_t)fftBuf.data(), fftBuf.size() );
+    b_isFftValid = true;
+    qDebug() << "fft end";
+}
+
+void Engine::refFftDisplay()
+{
+    if(b_isFftValid == true)
+    {
+        b_isFftValid = false;
+        emit fftGenerated((intptr_t)fftBuf.data(), u16_fftSize );
+    }
 }
