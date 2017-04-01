@@ -3,9 +3,9 @@
 
 #include <QThread>
 #include <QVector>
-#include "engine/libfft.h"
 #include "engine/interface.h"
 #include "spec/mousetrace.h"
+#include "thirdPartLib/fftw3/fftw3.h"
 
 class Engine : public QThread
 {
@@ -24,24 +24,27 @@ signals:
 protected:
     void run();
 private:
-    Interface       *p_interfaceTcp;
-    volatile bool   b_stopped;
-    quint16         u16_fftSize;
-    quint16         u16_fftB;
-    float           *pf32_IQ;
-    QVector<float>  dataIqBuf1;
-    QVector<float>  dataIqBuf2;
-    QVector<float>  fftBuf;
+    Interface           *p_interfaceTcp;
+    volatile bool       b_stopped;
+    quint16             u16_fftSize;
 
-    qint16           *pi16_IQ;
-    QVector<qint16>  i16_dataIqBuf1;
-    QVector<qint16>  i16_dataIqBuf2;
+    float               *pf32_IQ;
+    QVector<float>      dataIqBuf1;
+    QVector<float>      dataIqBuf2;
+    QVector<float>      fftBuf;
 
-    FFT             alg_fft;
-    bool            b_isConnected;
-    bool            b_isBufferOne;
-    bool            b_isFftValid;
-    dataTypeEnum    en_iqType;
+    qint16              *pi16_IQ;
+    QVector<qint16>     i16_dataIqBuf1;
+    QVector<qint16>     i16_dataIqBuf2;
+
+    fftw_complex        *p_fftIn;
+    fftw_complex        *p_fftOut;
+    fftw_plan           fftPlan;
+
+    bool                b_isConnected;
+    bool                b_isBufferOne;
+    bool                b_isFftValid;
+    dataTypeEnum        en_iqType;
     void doFft(void);
     void resetFftSize(quint16 u16_size);
     void refFftDisplay(void);

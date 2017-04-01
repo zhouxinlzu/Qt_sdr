@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     spec/specbackground.cpp \
     spec/speccurve.cpp \
     spec/specwave.cpp \
-    engine/libfft.cpp \
     spec/specview.cpp \
     spec/specscene.cpp \
     spec/mousetrace.cpp \
@@ -32,7 +31,6 @@ HEADERS  += mainwindow.h \
     spec/specbackground.h \
     spec/speccurve.h \
     spec/specwave.h \
-    engine/libfft.h \
     spec/specview.h \
     spec/specscene.h \
     spec/mousetrace.h \
@@ -43,3 +41,6 @@ FORMS    += mainwindow.ui
 
 RESOURCES += \
     images.qrc
+
+win32: LIBS += ../kc_sdr/thirdPartLib/fftw3/libfftw3-3.dll
+win32: LIBS += -L../kc_sdr/thirdPartLib/fftw3/ -llibfftw3-3

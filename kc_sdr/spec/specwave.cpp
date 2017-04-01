@@ -81,6 +81,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     /*!
      * connect
      */
+
 }
 
 void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)

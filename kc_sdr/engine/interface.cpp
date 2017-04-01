@@ -13,7 +13,7 @@ Interface::Interface(QObject *parent) :
 //    qDebug() << "localHostName: " << localHostName << endl
 //             << "ip address: " << info.addresses();
 //    QHostInfo::lookupHost("box", this, SLOT(deviceLookup(QHostInfo)));
-    en_iqType = INT_16;//INT_16;
+    en_iqType = FLOAT_32;//INT_16;
     p_socket = new QTcpSocket(this);
     connect(p_socket, &QTcpSocket::readyRead, this, &Interface::readMessage);
     connect(p_socket, &QTcpSocket::connected, this, &Interface::connectSuccess);
@@ -49,7 +49,9 @@ void Interface::connect2Server()
         u32_blockSize = sizeof(float) * u32_recvIqPair * 2;
     }break;
     }
+#if INTERFACE_DBG
     qDebug() << "recv size " << u32_blockSize;
+#endif
     p_socket->abort();
     p_socket->connectToHost("192.168.11.7", 60902);
 }
@@ -81,7 +83,6 @@ void Interface::send2Server(cmdEnum en_cmd, qint64 i64_data)
     QDataStream sendOut(p_socket);
     sendOut.setVersion(QDataStream::Qt_5_8);
 
-//    qDebug() << "cmd size = " << sizeof(str_cmd);
     sendOut.writeRawData((const char *)&str_cmd, sizeof(str_cmd));
 }
 
@@ -92,12 +93,10 @@ void Interface::recvBufSet(intptr_t u32_addr)
     case INT_16:
     {
         pi16_recvBuf = (qint16 *)u32_addr;
- //       qDebug() <<  "recv buffer addr " << pi16_recvBuf;
     }break;
     case FLOAT_32:
     {
         pf32_recvBuf = (float *)u32_addr;
-        qDebug() << "get addr "<< u32_addr << "recv buffer addr " << pf32_recvBuf;
     }break;
     default:break;
     }
@@ -126,23 +125,28 @@ void Interface::readMessage()
     {
         return;
     }
+#if INTERFACE_DBG
     qDebug() << "!!!!!!reveived "<< u32_blockSize;
+#endif
     int readnum = 0;
     switch(en_iqType)
     {
     case INT_16:
     {
-   //     qDebug() << "save buffer" << u32_blockSize;
         if((readnum = input.readRawData((char *)pi16_recvBuf, u32_blockSize)) < u32_blockSize)
         {
+#if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;
+#endif
         }
     }break;
     case FLOAT_32:
     {
         if((readnum = input.readRawData((char *)pf32_recvBuf, u32_blockSize)) < u32_blockSize)
         {
+#if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;
+#endif
         }
     }break;
     }

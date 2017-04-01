@@ -47,10 +47,10 @@ private:
     QTcpSocket      *p_socket;
     QString         message;
     dataTypeEnum    en_iqType;
-    quint32     u32_blockSize;
-    quint32     u32_recvIqPair;
-    float       *pf32_recvBuf;
-    qint16      *pi16_recvBuf;
+    quint32         u32_blockSize;
+    quint32         u32_recvIqPair;
+    float           *pf32_recvBuf;
+    qint16          *pi16_recvBuf;
 };
 
 #endif // INTERFACE_H
