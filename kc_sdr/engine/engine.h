@@ -33,9 +33,13 @@ private:
     QVector<float>      dataIqBuf2;
     QVector<float>      fftBuf;
 
-    qint16              *pi16_IQ;
-    QVector<qint16>     i16_dataIqBuf1;
-    QVector<qint16>     i16_dataIqBuf2;
+//    qint16              *pi16_IQ;
+//    QVector<qint16>     i16_dataIqBuf1;
+//    QVector<qint16>     i16_dataIqBuf2;
+
+    quint32             *pu32_fftBuf;
+    QVector<quint32>     u32_dataFftBuf1;
+    QVector<quint32>     u32_dataFftBuf2;
 
     fftw_complex        *p_fftIn;
     fftw_complex        *p_fftOut;

@@ -7,6 +7,7 @@
 typedef enum
 {
     INT_16,
+    UINT_32,
     FLOAT_32,
 }dataTypeEnum;
 typedef enum __attribute__((gcc_struct, packed))
@@ -51,6 +52,7 @@ private:
     quint32         u32_recvIqPair;
     float           *pf32_recvBuf;
     qint16          *pi16_recvBuf;
+    quint32         *pu32_recvBuf;
 };
 
 #endif // INTERFACE_H

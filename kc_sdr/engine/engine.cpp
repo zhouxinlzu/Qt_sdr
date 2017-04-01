@@ -2,7 +2,7 @@
 #include <QtMath>
 #include <cstdint>
 #define ENGINE_DBG  1
-#define SIMULATE   1
+#define SIMULATE   0
 
 #if ENGINE_DBG
 #include <QDebug>
@@ -91,11 +91,15 @@ void Engine::recvBufSet(void)
     {
     case INT_16:
     {
-        p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf1.data());
+        //p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf1.data());
     }break;
     case FLOAT_32:
     {
         p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf1.data());
+    }break;
+    case UINT_32:
+    {
+        p_interfaceTcp->recvBufSet((intptr_t)u32_dataFftBuf1.data());
     }break;
     default:break;
     }
@@ -124,13 +128,19 @@ void Engine::resetFftSize(quint16 u16_size)
     {
     case INT_16:
     {
-        i16_dataIqBuf1.resize(2 * IQ_PAIR);
-        i16_dataIqBuf2.resize(2 * IQ_PAIR);
-        pi16_IQ = i16_dataIqBuf1.data();
+//        i16_dataIqBuf1.resize(2 * IQ_PAIR);
+//        i16_dataIqBuf2.resize(2 * IQ_PAIR);
+//        pi16_IQ = i16_dataIqBuf1.data();
     }break;
     case FLOAT_32:
     {
         dataIqBuf2.resize(2 * IQ_PAIR);
+    }break;
+    case UINT_32:
+    {
+        u32_dataFftBuf1.resize(IQ_PAIR);
+        u32_dataFftBuf2.resize(IQ_PAIR);
+        pu32_fftBuf = u32_dataFftBuf1.data();
     }break;
     default:break;
     }
@@ -152,7 +162,7 @@ void Engine::iqGet()
     for(int j = 0; j < IQ_PAIR / u16_fftSize; j++)
     {
         float *pf32_buf = pf32_IQ + j * u16_fftSize * 2;
-        qint16 *pi16_buf = pi16_IQ + j * u16_fftSize * 2;
+        //qint16 *pi16_buf = pi16_IQ + j * u16_fftSize * 2;
         for(int i = 0; i < u16_fftSize; i++)
         {
             float nphase = noise * ((float)qrand() / RAND_MAX - 0.5f);
@@ -162,8 +172,8 @@ void Engine::iqGet()
             {
             case INT_16:
             {
-                pi16_buf[2 * i] = pf32_buf[2 * i];
-                pi16_buf[2 * i + 1] = pf32_buf[2 * i + 1];
+//                pi16_buf[2 * i] = pf32_buf[2 * i];
+//                pi16_buf[2 * i + 1] = pf32_buf[2 * i + 1];
             }break;
             default:break;
             }
@@ -177,14 +187,19 @@ void Engine::iqGet()
         {
         case INT_16:
         {
-           p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf2.data());
-           pi16_IQ = i16_dataIqBuf1.data();
+//           p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf2.data());
+//           pi16_IQ = i16_dataIqBuf1.data();
         } break;
         case FLOAT_32:
         {
             p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf2.data());
             pf32_IQ = dataIqBuf1.data();
         } break;
+        case UINT_32:
+        {
+            p_interfaceTcp->recvBufSet((intptr_t)u32_dataFftBuf2.data());
+            pu32_fftBuf = u32_dataFftBuf1.data();
+        }
         default:break;
         }
     }
@@ -195,14 +210,19 @@ void Engine::iqGet()
         {
         case INT_16:
         {
-           p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf1.data());
-           pi16_IQ = i16_dataIqBuf2.data();
+//           p_interfaceTcp->recvBufSet((intptr_t)i16_dataIqBuf1.data());
+//           pi16_IQ = i16_dataIqBuf2.data();
         } break;
         case FLOAT_32:
         {
             p_interfaceTcp->recvBufSet((intptr_t)dataIqBuf1.data());
             pf32_IQ = dataIqBuf2.data();
         } break;
+        case UINT_32:
+        {
+            p_interfaceTcp->recvBufSet((intptr_t)u32_dataFftBuf1.data());
+            pu32_fftBuf = u32_dataFftBuf2.data();
+        }break;
         default:break;
         }
     }
@@ -221,22 +241,22 @@ void Engine::doFft()
     {
     case INT_16:
     {
-        for(int j = 0; j < IQ_PAIR / u16_fftSize; j++)
-        {
-            qint16 *pi16_buf = pi16_IQ + j * u16_fftSize * 2;
-            float *pf32_buf = pf32_IQ + j * u16_fftSize * 2;
-            for(int i = 0 ; i < u16_fftSize; i++)
-            {
-              p_fftIn[i][0] =   pi16_buf[2 * i];
-              p_fftIn[i][1] =   pi16_buf[2 * i + 1];
-            }
-            fftw_execute(fftPlan);
-            for(int i = 0; i < u16_fftSize; i++)
-            {
-                pf32_buf[2 * i] = p_fftOut[i][0];
-                pf32_buf[2 * i + 1] = p_fftOut[i][1];
-            }
-        }
+//        for(int j = 0; j < IQ_PAIR / u16_fftSize; j++)
+//        {
+//            qint16 *pi16_buf = pi16_IQ + j * u16_fftSize * 2;
+//            float *pf32_buf = pf32_IQ + j * u16_fftSize * 2;
+//            for(int i = 0 ; i < u16_fftSize; i++)
+//            {
+//              p_fftIn[i][0] =   pi16_buf[2 * i];
+//              p_fftIn[i][1] =   pi16_buf[2 * i + 1];
+//            }
+//            fftw_execute(fftPlan);
+//            for(int i = 0; i < u16_fftSize; i++)
+//            {
+//                pf32_buf[2 * i] = p_fftOut[i][0];
+//                pf32_buf[2 * i + 1] = p_fftOut[i][1];
+//            }
+//        }
     }break;
     case FLOAT_32:
     {
@@ -257,19 +277,38 @@ void Engine::doFft()
             }
         }
     }break;
-    }
-    for(int i = 0; i < IQ_PAIR / u16_fftSize; i++)
+    case UINT_32:
     {
-        float *pf32_buf = pf32_IQ + i * u16_fftSize * 2;
-        uint32_t u32_index = i * u16_fftSize;
-        for(int j = 0; j < u16_fftSize; j++)
+//        pu32_fftBuf[0] = 0xABC45698;
+//        int integer = (int)(pu32_fftBuf[0] >> 16);
+//        int fractional = (int)(pu32_fftBuf[0] & 0xffff);
+//        float m = (float)integer + (float)fractional / 100000;
+//        qDebug() << integer << fractional << m ;
+        for(int i = 0; i < IQ_PAIR; i++)
         {
-            //! log(sqrt(x)) = (1/2)log(x)
-            float f32_lev = pf32_buf[2 * j] * pf32_buf[2 * j] + pf32_buf[2 * j + 1] * pf32_buf[2 * j + 1];
-            //!sqrt(a)--> dB = 20 * log(a) = 10 * log(a)
-            fftBuf[u32_index + j] = 10 * log(f32_lev);
+            int integer = (int)(pu32_fftBuf[i] >> 16);
+            int fractional = (int)(pu32_fftBuf[i] & 0xffff);
+            fftBuf[i] = (float)integer + (float)fractional / 100000 ;
+        }
+    }break;
+    default:break;
+    }
+    if(en_iqType != UINT_32)
+    {
+        for(int i = 0; i < IQ_PAIR / u16_fftSize; i++)
+        {
+            float *pf32_buf = pf32_IQ + i * u16_fftSize * 2;
+            uint32_t u32_index = i * u16_fftSize;
+            for(int j = 0; j < u16_fftSize; j++)
+            {
+                //! log(sqrt(x)) = (1/2)log(x)
+                float f32_lev = pf32_buf[2 * j] * pf32_buf[2 * j] + pf32_buf[2 * j + 1] * pf32_buf[2 * j + 1];
+                //!sqrt(a)--> dB = 20 * log(a) = 10 * log(a)
+                fftBuf[u32_index + j] = 10 * log(f32_lev);
+            }
         }
     }
+
     b_isFftValid = true;
 #if ENGINE_DBG
     qDebug() << "fft use: " << time.elapsed() << "ms";

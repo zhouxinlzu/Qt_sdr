@@ -13,7 +13,7 @@ Interface::Interface(QObject *parent) :
 //    qDebug() << "localHostName: " << localHostName << endl
 //             << "ip address: " << info.addresses();
 //    QHostInfo::lookupHost("box", this, SLOT(deviceLookup(QHostInfo)));
-    en_iqType = FLOAT_32;//INT_16;
+    en_iqType = UINT_32;//INT_16;
     p_socket = new QTcpSocket(this);
     connect(p_socket, &QTcpSocket::readyRead, this, &Interface::readMessage);
     connect(p_socket, &QTcpSocket::connected, this, &Interface::connectSuccess);
@@ -48,12 +48,16 @@ void Interface::connect2Server()
     {
         u32_blockSize = sizeof(float) * u32_recvIqPair * 2;
     }break;
+    case UINT_32:
+    {
+        u32_blockSize = sizeof(quint32) * u32_recvIqPair;
+    }break;
     }
 #if INTERFACE_DBG
     qDebug() << "recv size " << u32_blockSize;
 #endif
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.7", 60902);
+    p_socket->connectToHost("192.168.11.3", 60902);
 }
 
 bool Interface::connectStatus()
@@ -97,6 +101,10 @@ void Interface::recvBufSet(intptr_t u32_addr)
     case FLOAT_32:
     {
         pf32_recvBuf = (float *)u32_addr;
+    }break;
+    case UINT_32:
+    {
+        pu32_recvBuf = (quint32 *)u32_addr;
     }break;
     default:break;
     }
@@ -143,6 +151,15 @@ void Interface::readMessage()
     case FLOAT_32:
     {
         if((readnum = input.readRawData((char *)pf32_recvBuf, u32_blockSize)) < u32_blockSize)
+        {
+#if INTERFACE_DBG
+            qDebug() << "receive num ->" << readnum;
+#endif
+        }
+    }break;
+    case UINT_32:
+    {
+        if((readnum = input.readRawData((char *)pu32_recvBuf, u32_blockSize)) < u32_blockSize)
         {
 #if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;
