@@ -42,22 +42,22 @@ void Interface::connect2Server()
     {
     case INT_16:
     {
-        u32_blockSize = sizeof(qint16) * u32_recvIqPair * 2;
+        i32_blockSize = sizeof(qint16) * u32_recvIqPair * 2;
     }break;
     case FLOAT_32:
     {
-        u32_blockSize = sizeof(float) * u32_recvIqPair * 2;
+        i32_blockSize = sizeof(float) * u32_recvIqPair * 2;
     }break;
     case UINT_32:
     {
-        u32_blockSize = sizeof(quint32) * u32_recvIqPair;
+        i32_blockSize = sizeof(quint32) * u32_recvIqPair;
     }break;
     }
 #if INTERFACE_DBG
-    qDebug() << "recv size " << u32_blockSize;
+    qDebug() << "recv size " << i32_blockSize;
 #endif
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.3", 60902);
+    p_socket->connectToHost("192.168.11.10", 60902);
 }
 
 bool Interface::connectStatus()
@@ -84,6 +84,7 @@ void Interface::send2Server(cmdEnum en_cmd, qint64 i64_data)
     str_cmd.en_cmd = en_cmd;
     str_cmd.i64_data = i64_data;
 
+    qDebug() << "send cmd" << en_cmd << "data" << i64_data;
     QDataStream sendOut(p_socket);
     sendOut.setVersion(QDataStream::Qt_5_8);
 
@@ -129,19 +130,19 @@ void Interface::readMessage()
 {
     QDataStream input(p_socket);
     input.setVersion(QDataStream::Qt_5_8);
-    if(p_socket->bytesAvailable() < u32_blockSize)
+    if(p_socket->bytesAvailable() < i32_blockSize)
     {
         return;
     }
 #if INTERFACE_DBG
-    qDebug() << "!!!!!!reveived "<< u32_blockSize;
+    qDebug() << "!!!!!!reveived "<< i32_blockSize;
 #endif
     int readnum = 0;
     switch(en_iqType)
     {
     case INT_16:
     {
-        if((readnum = input.readRawData((char *)pi16_recvBuf, u32_blockSize)) < u32_blockSize)
+        if((readnum = input.readRawData((char *)pi16_recvBuf, i32_blockSize)) < i32_blockSize)
         {
 #if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;
@@ -150,7 +151,7 @@ void Interface::readMessage()
     }break;
     case FLOAT_32:
     {
-        if((readnum = input.readRawData((char *)pf32_recvBuf, u32_blockSize)) < u32_blockSize)
+        if((readnum = input.readRawData((char *)pf32_recvBuf, i32_blockSize)) < i32_blockSize)
         {
 #if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;
@@ -159,7 +160,7 @@ void Interface::readMessage()
     }break;
     case UINT_32:
     {
-        if((readnum = input.readRawData((char *)pu32_recvBuf, u32_blockSize)) < u32_blockSize)
+        if((readnum = input.readRawData((char *)pu32_recvBuf, i32_blockSize)) < i32_blockSize)
         {
 #if INTERFACE_DBG
             qDebug() << "receive num ->" << readnum;

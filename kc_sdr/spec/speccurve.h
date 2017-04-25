@@ -16,7 +16,7 @@ public slots:
 private:
     qreal   f64_penWidth;
     QRectF  *p_rect;
-    QPointF  *p_curve;
+    QPointF  *p_curveDis;
     quint16 u16_curveSize;
     QPen    pen;
 };

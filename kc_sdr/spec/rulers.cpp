@@ -1,6 +1,5 @@
 #include "rulers.h"
 #include <QPainter>
-#include "mousetrace.h"
 #include <QDebug>
 
 Rulers::Rulers(quint16 u16_width, quint16 u16_height, bool b_ruler)

@@ -10,7 +10,7 @@ typedef enum
     UINT_32,
     FLOAT_32,
 }dataTypeEnum;
-typedef enum __attribute__((gcc_struct, packed))
+typedef enum //__attribute__((gcc_struct, packed))
 {
     CMD_SET_FREQ,
     CMD_GET_IQ,
@@ -48,7 +48,7 @@ private:
     QTcpSocket      *p_socket;
     QString         message;
     dataTypeEnum    en_iqType;
-    quint32         u32_blockSize;
+    qint32          i32_blockSize;
     quint32         u32_recvIqPair;
     float           *pf32_recvBuf;
     qint16          *pi16_recvBuf;

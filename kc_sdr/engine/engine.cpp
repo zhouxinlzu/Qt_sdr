@@ -4,6 +4,7 @@
 #define ENGINE_DBG  1
 #define SIMULATE   0
 
+
 #if ENGINE_DBG
 #include <QDebug>
 #include <QTime>
@@ -63,6 +64,7 @@ void Engine::run()
 }
 void Engine::stop()
 {
+    p_interfaceTcp->send2Server(CMD_STOP_IQ, 0);
     p_interfaceTcp->disConnect2Server();
     b_stopped = true;
     while(Engine::isRunning() == true)
@@ -107,17 +109,22 @@ void Engine::recvBufSet(void)
 
 void Engine::resetFftSize(quint16 u16_size)
 {
+#if USE_FFTW
     if((p_fftIn != NULL) || (p_fftOut != NULL))
     {
+
         fftw_destroy_plan(fftPlan);
         fftw_free(p_fftIn);
         fftw_free(p_fftIn);
     }
-
+#endif
     u16_fftSize = u16_size;
+    qDebug() << "set fftsize = " << u16_fftSize;
+#if USE_FFTW
     p_fftIn = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * u16_fftSize);
     p_fftOut = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * u16_fftSize);
     fftPlan = fftw_plan_dft_1d(u16_fftSize, p_fftIn, p_fftOut, FFTW_FORWARD, FFTW_MEASURE);
+#endif
 
     p_interfaceTcp->dataIqPair(IQ_PAIR);
     dataIqBuf1.resize(2 * IQ_PAIR);
@@ -144,6 +151,12 @@ void Engine::resetFftSize(quint16 u16_size)
     }break;
     default:break;
     }
+}
+
+void Engine::freqSet(quint64 u64_freq)
+{
+    qDebug() << "set frequency = " << u64_freq;
+    p_interfaceTcp->send2Server(CMD_SET_FREQ, u64_freq);
 }
 
 void Engine::startGetIq()
@@ -237,6 +250,37 @@ void Engine::doFft()
 
     time.start();
 #endif
+
+#if SIMULATE
+    for(int j = 0; j < IQ_PAIR / u16_fftSize; j++)
+    {
+        float *pf32_buf = pf32_IQ + j * u16_fftSize * 2;
+        for(int i = 0 ; i < u16_fftSize; i++)
+        {
+          p_fftIn[i][0] =   pf32_buf[2 * i];
+          p_fftIn[i][1] =   pf32_buf[2 * i + 1];
+        }
+        fftw_execute(fftPlan);
+        for(int i = 0; i < u16_fftSize; i++)
+        {
+            //float f32_hanni = 0.5 * (1 - cos(2*M_PI*i/(u16_fftSize -1)));
+            pf32_buf[2 * i] =  p_fftOut[i][0];
+            pf32_buf[2 * i + 1] =  p_fftOut[i][1];
+        }
+    }
+    for(int i = 0; i < IQ_PAIR / u16_fftSize; i++)
+    {
+        float *pf32_buf = pf32_IQ + i * u16_fftSize * 2;
+        uint32_t u32_index = i * u16_fftSize;
+        for(int j = 0; j < u16_fftSize; j++)
+        {
+            //! log(sqrt(x)) = (1/2)log(x)
+            float f32_lev = pf32_buf[2 * j] * pf32_buf[2 * j] + pf32_buf[2 * j + 1] * pf32_buf[2 * j + 1];
+            //!sqrt(a)--> dB = 20 * log(a) = 10 * log(a)
+            fftBuf[u32_index + j] = 10 * log(f32_lev);
+        }
+    }
+#else
     switch(en_iqType)
     {
     case INT_16:
@@ -262,6 +306,7 @@ void Engine::doFft()
     {
         for(int j = 0; j < IQ_PAIR / u16_fftSize; j++)
         {
+#if USE_FFTW
             float *pf32_buf = pf32_IQ + j * u16_fftSize * 2;
             for(int i = 0 ; i < u16_fftSize; i++)
             {
@@ -275,20 +320,28 @@ void Engine::doFft()
                 pf32_buf[2 * i] =  p_fftOut[i][0];
                 pf32_buf[2 * i + 1] =  p_fftOut[i][1];
             }
+#endif
         }
     }break;
     case UINT_32:
     {
-//        pu32_fftBuf[0] = 0xABC45698;
-//        int integer = (int)(pu32_fftBuf[0] >> 16);
-//        int fractional = (int)(pu32_fftBuf[0] & 0xffff);
-//        float m = (float)integer + (float)fractional / 100000;
-//        qDebug() << integer << fractional << m ;
+//        for(int i = 0; i < 1024; i++)
+//        {
+////            if(pu32_fftBuf[index]  < pu32_fftBuf[i])
+////            {
+////                index = i;
+////            }
+//            if((i >= 40)&&(i <= 60))
+//             qDebug() << pu32_fftBuf[i];
+//        }
+
         for(int i = 0; i < IQ_PAIR; i++)
         {
+
             int integer = (int)(pu32_fftBuf[i] >> 16);
             int fractional = (int)(pu32_fftBuf[i] & 0xffff);
-            fftBuf[i] = (float)integer + (float)fractional / 100000 ;
+            fftBuf[i] = (float)integer + (float)fractional / 65536;
+            fftBuf[i] *= 20;
         }
     }break;
     default:break;
@@ -308,11 +361,10 @@ void Engine::doFft()
             }
         }
     }
+#endif
+
 
     b_isFftValid = true;
-#if ENGINE_DBG
-    qDebug() << "fft use: " << time.elapsed() << "ms";
-#endif
 }
 
 void Engine::refFftDisplay()

@@ -2,6 +2,7 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QCursor>
 #include <QPainter>
+#include <QMouseEvent>
 
 #define MOUSE_DBG   1
 
@@ -21,6 +22,7 @@ MouseTrace::MouseTrace(quint16 u16_width, quint16 u16_height)
     pen = QPen(Qt::white, 0, Qt::DashDotLine, Qt::SquareCap, Qt::BevelJoin);
 
     setAcceptHoverEvents(true);
+   // setMouseTracking(true);
 }
 
 QRectF MouseTrace::boundingRect() const
@@ -117,15 +119,29 @@ void MouseTrace::waveValGet(intptr_t valAddr)
 
 void MouseTrace::waveValDis(QPainter *painter)
 {
-    QPointF rectangle;
-    rectangle.setX(f64_mouseX);
-    rectangle.setY(f64_mouseY);
+    if(pstr_disVal->pf32_fftBuf == NULL)
+    {
+        return;
+    }
 
     QString p_str("%1Hz,%2dBm");
     qreal f64_freq = pstr_disVal->f64_strFreq + pstr_disVal->f64_freqResolution * qRound(f64_mouseX);
     qreal f64_dBm = pstr_disVal->pf32_fftBuf[qRound(f64_mouseX)];
     p_str = p_str.arg(f64_freq).arg(f64_dBm);
+
+//    QFont font = painter->font();
+//    font.setPointSizeF(font.pointSizeF() * 4);
+//    painter->setFont(font);
+
+    qreal f64_xscale = scale() / painter->transform().m11();
+    qreal f64_yscale = scale() / painter->transform().m22();
+    painter->save();
+    painter->scale(f64_xscale, f64_yscale);
+    QPointF rectangle;
+    rectangle.setX(f64_mouseX / f64_xscale);
+    rectangle.setY(f64_mouseY / f64_yscale);
     painter->drawText(rectangle, p_str);
+    painter->restore();
 }
 
 bool MouseTrace::waveAmpResolutionAdd(qreal f64_val)

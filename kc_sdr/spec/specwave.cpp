@@ -15,7 +15,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
      * scene parameter set
      *
      */
-    str_disValCfg.f32_disRef = 10;
+    str_disValCfg.f32_disRef = 40;
     str_disValCfg.f64_ampResolution = 0.1f;
     str_disValCfg.u16_width = 1024;
     str_disValCfg.u16_height = 400;
@@ -28,16 +28,16 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     str_disValCfg.f64_ampResolutionMin = 0.01f;
     str_disValCfg.u8_ampRulerWidth = 50;
     str_disValCfg.u8_freqRulerHeight = 50;
+    str_disValCfg.pf32_fftBuf = NULL;
 
     b_isMalloc = false;
-
-    disBufReset(str_disValCfg.u16_width);
     /*!
      * set item's parameter
      */
     p_scene = new SpecScene(this);
     p_background = new SpecBackground(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_curve = new SpecCurve(str_disValCfg.u16_width, str_disValCfg.u16_height);
+    disBufReset(str_disValCfg.u16_width);
     p_mouse = new MouseTrace(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_ampRuler = new Rulers(str_disValCfg.u8_ampRulerWidth, str_disValCfg.u16_height, true);
     p_freqRuler = new Rulers(str_disValCfg.u16_width, str_disValCfg.u8_freqRulerHeight, false);
@@ -61,6 +61,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     p_background->setPos(str_disValCfg.u8_ampRulerWidth, 0);
     p_curve->setPos(str_disValCfg.u8_ampRulerWidth,0);
     p_mouse->setPos(str_disValCfg.u8_ampRulerWidth, 0);
+
 
     /*!
      *  view parameter set
@@ -134,5 +135,8 @@ void SpecWave::disBufReset(quint16 u16_size)
         free(p_curveDisBuf);
     }
     p_curveDisBuf = (QPointF *)malloc(sizeof(QPointF) * u16_size);
+    Q_ASSERT(p_curveDisBuf != NULL);
+    memset(p_curveDisBuf, 0, sizeof(QPointF) * u16_size);
+    p_curve->curveGet(p_curveDisBuf, u16_size);
 }
 

@@ -8,21 +8,22 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->centralWidget->hide();
+
+    //! 数据产生引擎
     p_engineThread = new Engine(this);
+    //! 显示连接状态
     p_leftStatus = new QLabel(this);
     ui->statusBar->addWidget(p_leftStatus);
     status_disconnected();
 
+    //! 连接信号与槽
     connect(p_engineThread, &Engine::fftGenerated, ui->waveform, &SpecWave::recvFftValue, Qt::QueuedConnection);
     connect(p_engineThread, &Engine::connected2Device, this, &MainWindow::status_connected);
     connect(p_engineThread, &Engine::disconnected2Device, this, &MainWindow::status_disconnected);
 
+    //! 启动引擎
     p_engineThread->start();
 
-
-    ui->ampLineEdit->setText(QString::number(ui->ampSlider->value(), 10));
-    ui->freqLineEdit->setText(QString::number(ui->freqSlider->value(), 10));
 }
 
 MainWindow::~MainWindow()
@@ -55,26 +56,43 @@ void MainWindow::status_disconnected()
     p_leftStatus->setText("Can't connect to device.");
 }
 
-void MainWindow::on_ampSlider_valueChanged(int value)
+bool MainWindow::freqGet(const char *pi8_buf, quint64 *pu64_freq)
 {
-    p_engineThread->i16_simAmp = value;
-    ui->ampLineEdit->setText(QString::number(value, 10));
+    bool b_return = true;
+    char *pi8_unit = NULL;
+
+    qreal f64_freq = strtod(pi8_buf, &pi8_unit);
+    const char *ci8_par[3] = {"G", "M", "k"};
+    qint8 i8_index = -1;
+    quint8 i = 0;
+    for(i = 0; i < 3; i++)
+    {
+        if(strcasecmp(pi8_unit, ci8_par[i]) == 0)
+        {
+            i8_index = i;
+            break;
+        }
+    }
+    quint64 u64_freq = 0;
+    switch (i8_index)
+    {
+    case 0: u64_freq = (quint64)(f64_freq * GHZ);break;
+    case 1: u64_freq = (quint64)(f64_freq * MHZ);break;
+    case 2: u64_freq = (quint64)(f64_freq * KHZ);break;
+    default: u64_freq = (quint64)(f64_freq);break;
+    }
+
+    *pu64_freq = u64_freq;
+
+    return b_return;
 }
 
-void MainWindow::on_freqSlider_valueChanged(int value)
+void MainWindow::on_line_freq_editingFinished()
 {
-    p_engineThread->u16_simFreq = value;
-    ui->freqLineEdit->setText(QString::number(value, 10));
-}
+    qDebug() << qPrintable(ui->line_freq->text());
 
-void MainWindow::on_ampLineEdit_editingFinished()
-{
-    p_engineThread->i16_simAmp = ui->ampLineEdit->text().toInt();
-    ui->ampSlider->setValue(p_engineThread->i16_simAmp);
-}
-
-void MainWindow::on_freqLineEdit_editingFinished()
-{
-    p_engineThread->u16_simFreq = ui->freqLineEdit->text().toInt();
-    ui->freqSlider->setValue( p_engineThread->u16_simFreq);
+    quint64 u64_freq = 0;
+    freqGet(qPrintable(ui->line_freq->text()), &u64_freq);
+    qDebug() << u64_freq;
+    p_engineThread->freqSet(u64_freq);
 }

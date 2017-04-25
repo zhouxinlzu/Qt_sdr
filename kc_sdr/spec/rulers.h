@@ -3,6 +3,7 @@
 
 #include <QGraphicsItem>
 #include <QPen>
+#include "mousetrace.h"
 
 class Rulers : public QGraphicsItem
 {

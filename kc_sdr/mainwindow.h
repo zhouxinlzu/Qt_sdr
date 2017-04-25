@@ -22,17 +22,13 @@ private slots:
     void status_connected(void);
     void status_disconnected(void);
 
-    void on_ampSlider_valueChanged(int value);
-
-    void on_freqSlider_valueChanged(int value);
-
-    void on_ampLineEdit_editingFinished();
-
-    void on_freqLineEdit_editingFinished();
+    void on_line_freq_editingFinished();
 private:
     Ui::MainWindow *ui;
     Engine *p_engineThread;
     QLabel *p_leftStatus;
+
+    bool freqGet(const char *pi8_buf, quint64 *pu64_freq);
 };
 
 #endif // MAINWINDOW_H
