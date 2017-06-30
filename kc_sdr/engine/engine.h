@@ -6,6 +6,7 @@
 #include "engine/interface.h"
 
 #define USE_FFTW   0
+#define SIMULATE   0
 
 #if USE_FFTW
 #include "thirdPartLib/fftw3/fftw3.h"
@@ -46,10 +47,6 @@ private:
     QVector<float>      dataIqBuf2;
     QVector<float>      fftBuf;
 
-//    qint16              *pi16_IQ;
-//    QVector<qint16>     i16_dataIqBuf1;
-//    QVector<qint16>     i16_dataIqBuf2;
-
     quint32             *pu32_fftBuf;
     QVector<quint32>     u32_dataFftBuf1;
     QVector<quint32>     u32_dataFftBuf2;
@@ -64,9 +61,10 @@ private:
     bool                b_isBufferOne;
     bool                b_isFftValid;
     dataTypeEnum        en_iqType;
-
+#if SIMULATE
     qint16          i16_simAmp;
     quint16         u16_simFreq;
+#endif
 private slots:
     void startGetIq(void);
     void iqGet(void);

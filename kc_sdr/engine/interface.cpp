@@ -40,10 +40,6 @@ void Interface::connect2Server()
 {
     switch(en_iqType)
     {
-    case INT_16:
-    {
-        i32_blockSize = sizeof(qint16) * u32_recvIqPair * 2;
-    }break;
     case FLOAT_32:
     {
         i32_blockSize = sizeof(float) * u32_recvIqPair * 2;
@@ -57,7 +53,7 @@ void Interface::connect2Server()
     qDebug() << "recv size " << i32_blockSize;
 #endif
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.10", 60902);
+    p_socket->connectToHost("192.168.11.27", 60902);
 }
 
 bool Interface::connectStatus()
@@ -95,10 +91,6 @@ void Interface::recvBufSet(intptr_t u32_addr)
 {
     switch(en_iqType)
     {
-    case INT_16:
-    {
-        pi16_recvBuf = (qint16 *)u32_addr;
-    }break;
     case FLOAT_32:
     {
         pf32_recvBuf = (float *)u32_addr;
@@ -140,15 +132,6 @@ void Interface::readMessage()
     int readnum = 0;
     switch(en_iqType)
     {
-    case INT_16:
-    {
-        if((readnum = input.readRawData((char *)pi16_recvBuf, i32_blockSize)) < i32_blockSize)
-        {
-#if INTERFACE_DBG
-            qDebug() << "receive num ->" << readnum;
-#endif
-        }
-    }break;
     case FLOAT_32:
     {
         if((readnum = input.readRawData((char *)pf32_recvBuf, i32_blockSize)) < i32_blockSize)

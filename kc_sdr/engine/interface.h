@@ -6,7 +6,6 @@
 
 typedef enum
 {
-    INT_16,
     UINT_32,
     FLOAT_32,
 }dataTypeEnum;
