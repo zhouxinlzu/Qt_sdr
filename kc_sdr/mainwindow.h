@@ -23,6 +23,23 @@ private slots:
     void status_disconnected(void);
 
     void on_line_freq_editingFinished();
+
+    void on_sideband_lsb_clicked();
+
+    void on_sideband_usb_clicked();
+
+    void on_if_unamp_clicked();
+
+    void on_if_ampx1_clicked();
+
+    void on_if_ampx2_clicked();
+
+    void on_pre_amp_clicked();
+
+    void on_pre_att_clicked();
+
+    void on_pre_unatt_clicked();
+
 private:
     Ui::MainWindow *ui;
     Engine *p_engineThread;

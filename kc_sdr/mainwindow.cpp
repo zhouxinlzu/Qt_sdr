@@ -96,3 +96,58 @@ void MainWindow::on_line_freq_editingFinished()
     qDebug() << u64_freq;
     p_engineThread->freqSet(u64_freq);
 }
+
+void MainWindow::on_sideband_lsb_clicked()
+{
+
+    qDebug() << "lsb selected";
+    p_engineThread->sideBand(SB_LSB);
+}
+
+void MainWindow::on_sideband_usb_clicked()
+{
+
+    qDebug() << "usb selected";
+    p_engineThread->sideBand(SB_USB);
+}
+
+void MainWindow::on_if_unamp_clicked()
+{
+
+    qDebug() << "if unamp selected";
+    p_engineThread->ifAmp(IF_UNAMP);
+}
+
+void MainWindow::on_if_ampx1_clicked()
+{
+    qDebug() << "if amp * 1 selected";
+    p_engineThread->ifAmp(IF_AMP_S);
+}
+
+void MainWindow::on_if_ampx2_clicked()
+{
+
+    qDebug() << "if amp * 2 selected";
+    p_engineThread->ifAmp(IF_AMP_D);
+}
+
+void MainWindow::on_pre_amp_clicked()
+{
+
+    qDebug() << "pre amp selected";
+    p_engineThread->prescxi(PRE_AMP);
+}
+
+void MainWindow::on_pre_att_clicked()
+{
+
+    qDebug() << "pre att selected";
+     p_engineThread->prescxi(PRE_ATT);
+}
+
+void MainWindow::on_pre_unatt_clicked()
+{
+
+    qDebug() << "pre unatt selected";
+    p_engineThread->prescxi(PRE_UNATT);
+}

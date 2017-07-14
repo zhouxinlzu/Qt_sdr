@@ -15,16 +15,16 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
      * scene parameter set
      *
      */
-    str_disValCfg.f32_disRef = 40;
-    str_disValCfg.f64_ampResolution = 0.1f;
+    str_disValCfg.f32_disRef = 0;
+    str_disValCfg.f64_ampResolution = 0.2f;
     str_disValCfg.u16_width = 1024;
     str_disValCfg.u16_height = 400;
     str_disValCfg.f32_disMin = str_disValCfg.f32_disRef - str_disValCfg.u16_height * str_disValCfg.f64_ampResolution;
     str_disValCfg.f64_strFreq = 0;
     str_disValCfg.f64_freqResolution = 1;
-    str_disValCfg.u8_hlNum= 6;
+    str_disValCfg.u8_hlNum= 8;
     str_disValCfg.u8_vlNum= 5;
-    str_disValCfg.f64_ampResolutionMax = 0.5f;
+    str_disValCfg.f64_ampResolutionMax = 5.0f;
     str_disValCfg.f64_ampResolutionMin = 0.01f;
     str_disValCfg.u8_ampRulerWidth = 50;
     str_disValCfg.u8_freqRulerHeight = 50;
@@ -41,11 +41,13 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     p_mouse = new MouseTrace(str_disValCfg.u16_width, str_disValCfg.u16_height);
     p_ampRuler = new Rulers(str_disValCfg.u8_ampRulerWidth, str_disValCfg.u16_height, true);
     p_freqRuler = new Rulers(str_disValCfg.u16_width, str_disValCfg.u8_freqRulerHeight, false);
+    p_marker = new SpecMarker(str_disValCfg.u16_width, str_disValCfg.u16_height);
 
     p_background->waveValGet((intptr_t)&str_disValCfg);
     p_mouse->waveValGet((intptr_t)&str_disValCfg);
     p_ampRuler->waveValGet((intptr_t)&str_disValCfg);
     p_freqRuler->waveValGet((intptr_t)&str_disValCfg);
+    p_marker->waveValGet((intptr_t)&str_disValCfg);
 
     p_scene->setSceneRect(0, 0, str_disValCfg.u16_width + str_disValCfg.u8_ampRulerWidth ,
                           str_disValCfg.u16_height + str_disValCfg.u8_freqRulerHeight);
@@ -56,6 +58,7 @@ SpecWave::SpecWave(QWidget *parent) : QWidget(parent)
     p_scene->addItem(p_freqRuler);
     p_scene->addItem(p_curve);
     p_scene->addItem(p_mouse);
+    p_scene->addItem(p_marker);
 
 
     p_background->setPos(str_disValCfg.u8_ampRulerWidth, 0);
@@ -118,6 +121,7 @@ void SpecWave::recvFftValue(quint32 u32_addr, quint16 u16_size)
         }
         p_curve->curveGet(p_curveDisBuf, u16_size);
         p_curve->update();
+        p_marker->update();
     }
     else
     {

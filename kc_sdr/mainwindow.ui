@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>700</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,7 +19,7 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>600</height>
+    <height>700</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -50,22 +50,98 @@
      <widget class="QLineEdit" name="line_freq"/>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupFftPoint">
+     <widget class="QGroupBox" name="groupSideband">
       <property name="title">
-       <string>FFT点数</string>
+       <string>边带选择</string>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <layout class="QVBoxLayout" name="verticalLayout_5">
        <item>
-        <widget class="QRadioButton" name="point512">
+        <widget class="QRadioButton" name="sideband_lsb">
          <property name="text">
-          <string>512</string>
+          <string>lsb</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="point1024">
+        <widget class="QRadioButton" name="sideband_usb">
          <property name="text">
-          <string>1024</string>
+          <string>usb</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupIF">
+      <property name="title">
+       <string>中频增益</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QRadioButton" name="if_unamp">
+         <property name="text">
+          <string>unamp</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="if_ampx1">
+         <property name="text">
+          <string>amp * 1</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="if_ampx2">
+         <property name="text">
+          <string>amp * 2</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupPre">
+      <property name="title">
+       <string>前置信号</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QRadioButton" name="pre_amp">
+         <property name="text">
+          <string>amp</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="pre_att">
+         <property name="text">
+          <string>att</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="pre_unatt">
+         <property name="text">
+          <string>unatt</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupFftPoint">
+      <property name="title">
+       <string>FFT点数</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QRadioButton" name="point4096">
+         <property name="text">
+          <string>4096</string>
          </property>
         </widget>
        </item>
@@ -77,9 +153,16 @@
         </widget>
        </item>
        <item>
-        <widget class="QRadioButton" name="point4096">
+        <widget class="QRadioButton" name="point1024">
          <property name="text">
-          <string>4096</string>
+          <string>1024</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="point512">
+         <property name="text">
+          <string>512</string>
          </property>
         </widget>
        </item>
@@ -132,7 +215,7 @@
    <property name="minimumSize">
     <size>
      <width>800</width>
-     <height>440</height>
+     <height>400</height>
     </size>
    </property>
    <property name="allowedAreas">

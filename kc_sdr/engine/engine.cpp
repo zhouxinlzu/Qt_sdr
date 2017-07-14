@@ -1,15 +1,16 @@
 #include "engine.h"
+#include "interface.h"
 #include <QtMath>
 #include <cstdint>
 #define ENGINE_DBG  1
-#define BOARD_SIMULATE 1
+#define BOARD_SIMULATE 0
 
 #if ENGINE_DBG
 #include <QDebug>
 #include <QTime>
 #endif
 
-#define IQ_PAIR     (1024)
+#define IQ_PAIR     (204800)
 
 Engine::Engine(QObject *parent):QThread(parent)
 {
@@ -156,6 +157,18 @@ void Engine::startGetIq()
 #endif
     p_interfaceTcp->send2Server(CMD_GET_IQ, 0);
 }
+void Engine::prescxi(preEnum en_pre)
+{
+    p_interfaceTcp->send2Server(CMD_SET_ATT, en_pre);
+}
+void Engine::ifAmp(ifEnum en_if)
+{
+    p_interfaceTcp->send2Server(CMD_SET_IFAMP, en_if);
+}
+void Engine::sideBand(sbEnum en_sb)
+{
+    p_interfaceTcp->send2Server(CMD_SET_SIDEBAND, en_sb);
+}
 
 void Engine::iqGet()
 {
@@ -288,23 +301,14 @@ void Engine::doFft()
                     fftBuf[i] = (float)pu32_fftBuf[i];
                 }
 #else
-                for(int i = 0; i < 1024; i++)
-                {
-        //            if(pu32_fftBuf[index]  < pu32_fftBuf[i])
-        //            {
-        //                index = i;
-        //            }
-                    if((i >= 40)&&(i <= 60))
-                     qDebug() << pu32_fftBuf[i];
-                }
-
                 for(int i = 0; i < IQ_PAIR; i++)
                 {
 
                     int integer = (int)(pu32_fftBuf[i] >> 16);
                     int fractional = (int)(pu32_fftBuf[i] & 0xffff);
                     fftBuf[i] = (float)integer + (float)fractional / 65536;
-                    //fftBuf[i] *= 20;
+                    fftBuf[i] *= 20;
+                    fftBuf[i] -= 88;
                 }
 #endif
     }break;

@@ -53,7 +53,7 @@ void Interface::connect2Server()
     qDebug() << "recv size " << i32_blockSize;
 #endif
     p_socket->abort();
-    p_socket->connectToHost("192.168.11.27", 60902);
+    p_socket->connectToHost("192.168.11.2", 60902);
 }
 
 bool Interface::connectStatus()
@@ -127,7 +127,7 @@ void Interface::readMessage()
         return;
     }
 #if INTERFACE_DBG
-    qDebug() << "!!!!!!reveived "<< i32_blockSize;
+//    qDebug() << "!!!!!!reveived "<< i32_blockSize;
 #endif
     int readnum = 0;
     switch(en_iqType)

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     spec/mousetrace.cpp \
     engine/interface.cpp \
     spec/rulers.cpp \
-    controler/controler.cpp
+    controler/controler.cpp \
+    spec/specmarker.cpp
 
 HEADERS  += mainwindow.h \
     engine/engine.h \
@@ -37,7 +38,8 @@ HEADERS  += mainwindow.h \
     spec/mousetrace.h \
     engine/interface.h \
     spec/rulers.h \
-    controler/controler.h
+    controler/controler.h \
+    spec/specmarker.h
 
 FORMS    += mainwindow.ui
 

@@ -28,6 +28,9 @@ public:
     void recvBufSet(void);
     void resetFftSize(quint16 u16_size);
     void freqSet(quint64 u64_freq);
+    void prescxi(preEnum en_pre);
+    void ifAmp(ifEnum en_if);
+    void sideBand(sbEnum en_sb);
 signals:
     void fftGenerated(intptr_t u32_addr, quint16 u16_size);
     void connected2Device(void);

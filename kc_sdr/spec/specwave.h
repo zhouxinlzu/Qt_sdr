@@ -9,6 +9,7 @@
 #include "specview.h"
 #include "mousetrace.h"
 #include "rulers.h"
+#include "specmarker.h"
 
 
 class SpecWave : public QWidget
@@ -27,6 +28,7 @@ private:
     SpecScene           *p_scene;
     Rulers              *p_ampRuler;
     Rulers              *p_freqRuler;
+    SpecMarker           *p_marker;
     struct disValCfgStr str_disValCfg;
     QPointF             *p_curveDisBuf;
     MouseTrace          *p_mouse;

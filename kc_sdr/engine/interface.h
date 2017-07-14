@@ -16,7 +16,28 @@ typedef enum //__attribute__((gcc_struct, packed))
     CMD_STOP_IQ,
     CMD_SET_ATT,
     CMD_SET_IFAMP,
+    CMD_SET_SIDEBAND,
 }cmdEnum;
+
+typedef enum
+{
+    PRE_AMP,
+    PRE_UNATT,
+    PRE_ATT,
+}preEnum;
+
+typedef enum
+{
+    IF_UNAMP,
+    IF_AMP_S,
+    IF_AMP_D,
+}ifEnum;
+
+typedef enum
+{
+    SB_LSB,
+    SB_USB,
+}sbEnum;
 
 typedef struct __attribute__((gcc_struct, packed))
 {
